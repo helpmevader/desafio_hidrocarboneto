@@ -1,0 +1,2039 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_b374aa8744c5f879269b3549c5af2c4f {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+        
+    <script src="https://cdn.jsdelivr.net/gh/python-visualization/folium@main/folium/templates/leaflet_heat.min.js"></script>
+</head>
+<body>
+    
+    
+    <div id="sidebar" class="sidebar-right">
+        <button id="sidebar-toggle" onclick="toggleSidebar()">&#x2190;</button>
+        <div id="sidebar-content">
+            <h1 style="font-size: 22px;">🧭 <b>Análise de Poluentes</b></h1>
+            <p style="font-size: 14px; margin-bottom: 20px;">Selecione as camadas e explore os dados de concentração.</p>
+            <div id="layer-control-container"></div>
+            <h2 style="font-size: 16px; margin-top: 50px;">
+            <div class="row" style="margin-top: 20px;">
+            <br>
+              <strong>Opções de Download<strong>
+            </div>
+            </h2>
+            <button onclick="downloadGeoJSON()" class="download-btn">Baixar dados (GeoJSON)</button>
+        </div>
+    </div>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('sidebar-toggle');
+            sidebar.classList.toggle('collapsed');
+            if (sidebar.classList.contains('collapsed')) { toggleBtn.innerHTML = '&#x2192;'; } else { toggleBtn.innerHTML = '&#x2190;'; }
+        }
+        function downloadGeoJSON() {
+            const geojsonData = {"type": "FeatureCollection", "features": [{"id": "89", "type": "Feature", "properties": {"station_id": 100, "station_name": "Estacao A1", "lat": -22.776923601921965, "lon": -42.450209443523626, "sample_dt": "2025-05-31", "pol_a": 8.5, "pol_b": 4.77, "unit": "mg/L", "data_formatada": "31/05/2025"}, "geometry": {"type": "Point", "coordinates": [-42.450209443523626, -22.776923601921965]}, "bbox": [-42.450209443523626, -22.776923601921965, -42.450209443523626, -22.776923601921965]}, {"id": "100", "type": "Feature", "properties": {"station_id": 101, "station_name": "Estacao B1", "lat": -22.31454929199456, "lon": -41.720023402618615, "sample_dt": "2025-06-30", "pol_a": 3.31, "pol_b": 2.07, "unit": "mg/L", "data_formatada": "30/06/2025"}, "geometry": {"type": "Point", "coordinates": [-41.720023402618615, -22.31454929199456]}, "bbox": [-41.720023402618615, -22.31454929199456, -41.720023402618615, -22.31454929199456]}, {"id": "203", "type": "Feature", "properties": {"station_id": 102, "station_name": "Estacao C1", "lat": -23.453090779776417, "lon": -43.22979555788089, "sample_dt": "2025-05-01", "pol_a": 6.69, "pol_b": 9.19, "unit": "mg/L", "data_formatada": "01/05/2025"}, "geometry": {"type": "Point", "coordinates": [-43.22979555788089, -23.453090779776417]}, "bbox": [-43.22979555788089, -23.453090779776417, -43.22979555788089, -23.453090779776417]}, {"id": "20", "type": "Feature", "properties": {"station_id": 103, "station_name": "Estacao D1", "lat": -20.9498842666306, "lon": -43.15164797758539, "sample_dt": "2025-06-30", "pol_a": 2.93, "pol_b": 0.88, "unit": "mg/L", "data_formatada": "30/06/2025"}, "geometry": {"type": "Point", "coordinates": [-43.15164797758539, -20.9498842666306]}, "bbox": [-43.15164797758539, -20.9498842666306, -43.15164797758539, -20.9498842666306]}, {"id": "99", "type": "Feature", "properties": {"station_id": 104, "station_name": "Estacao E1", "lat": -21.36801133094264, "lon": -44.1673275375645, "sample_dt": "2025-06-30", "pol_a": 7.1, "pol_b": 8.86, "unit": "mg/L", "data_formatada": "30/06/2025"}, "geometry": {"type": "Point", "coordinates": [-44.1673275375645, -21.36801133094264]}, "bbox": [-44.1673275375645, -21.36801133094264, -44.1673275375645, -21.36801133094264]}, {"id": "101", "type": "Feature", "properties": {"station_id": 105, "station_name": "Estacao F1", "lat": -21.62693785559862, "lon": -43.61309894248686, "sample_dt": "2025-04-01", "pol_a": 1.66, "pol_b": 3.88, "unit": "mg/L", "data_formatada": "01/04/2025"}, "geometry": {"type": "Point", "coordinates": [-43.61309894248686, -21.62693785559862]}, "bbox": [-43.61309894248686, -21.62693785559862, -43.61309894248686, -21.62693785559862]}, {"id": "161", "type": "Feature", "properties": {"station_id": 106, "station_name": "Estacao G1", "lat": -20.779514675362737, "lon": -43.683603251846094, "sample_dt": "2025-05-01", "pol_a": 3.06, "pol_b": 2.82, "unit": "mg/L", "data_formatada": "01/05/2025"}, "geometry": {"type": "Point", "coordinates": [-43.683603251846094, -20.779514675362737]}, "bbox": [-43.683603251846094, -20.779514675362737, -43.683603251846094, -20.779514675362737]}, {"id": "1", "type": "Feature", "properties": {"station_id": 107, "station_name": "Estacao H1", "lat": -22.995126873481208, "lon": -43.84370734128079, "sample_dt": "2025-05-01", "pol_a": 9.98, "pol_b": 3.03, "unit": "mg/L", "data_formatada": "01/05/2025"}, "geometry": {"type": "Point", "coordinates": [-43.84370734128079, -22.995126873481208]}, "bbox": [-43.84370734128079, -22.995126873481208, -43.84370734128079, -22.995126873481208]}, {"id": "213", "type": "Feature", "properties": {"station_id": 108, "station_name": "Estacao I1", "lat": -20.57015513250204, "lon": -43.26688896004531, "sample_dt": "2025-05-01", "pol_a": 1.27, "pol_b": 4.01, "unit": "mg/L", "data_formatada": "01/05/2025"}, "geometry": {"type": "Point", "coordinates": [-43.26688896004531, -20.57015513250204]}, "bbox": [-43.26688896004531, -20.57015513250204, -43.26688896004531, -20.57015513250204]}, {"id": "228", "type": "Feature", "properties": {"station_id": 109, "station_name": "Estacao J1", "lat": -22.77352018516772, "lon": -42.09058073086031, "sample_dt": "2025-06-30", "pol_a": 8.19, "pol_b": 3.81, "unit": "mg/L", "data_formatada": "30/06/2025"}, "geometry": {"type": "Point", "coordinates": [-42.09058073086031, -22.77352018516772]}, "bbox": [-42.09058073086031, -22.77352018516772, -42.09058073086031, -22.77352018516772]}, {"id": "210", "type": "Feature", "properties": {"station_id": 110, "station_name": "Estacao K1", "lat": -23.211470346725736, "lon": -41.67843020653119, "sample_dt": "2025-05-31", "pol_a": 9.83, "pol_b": 5.41, "unit": "mg/L", "data_formatada": "31/05/2025"}, "geometry": {"type": "Point", "coordinates": [-41.67843020653119, -23.211470346725736]}, "bbox": [-41.67843020653119, -23.211470346725736, -41.67843020653119, -23.211470346725736]}, {"id": "13", "type": "Feature", "properties": {"station_id": 111, "station_name": "Estacao L1", "lat": -22.717512475508773, "lon": -41.51123890072623, "sample_dt": "2025-05-01", "pol_a": 4.34, "pol_b": 8.93, "unit": "mg/L", "data_formatada": "01/05/2025"}, "geometry": {"type": "Point", "coordinates": [-41.51123890072623, -22.717512475508773]}, "bbox": [-41.51123890072623, -22.717512475508773, -41.51123890072623, -22.717512475508773]}, {"id": "40", "type": "Feature", "properties": {"station_id": 112, "station_name": "Estacao M1", "lat": -20.94721465369746, "lon": -41.69309501733716, "sample_dt": "2025-06-30", "pol_a": 0.67, "pol_b": 105.19, "unit": "mg/L", "data_formatada": "30/06/2025"}, "geometry": {"type": "Point", "coordinates": [-41.69309501733716, -20.94721465369746]}, "bbox": [-41.69309501733716, -20.94721465369746, -41.69309501733716, -20.94721465369746]}, {"id": "73", "type": "Feature", "properties": {"station_id": 113, "station_name": "Estacao N1", "lat": -22.963531872336013, "lon": -43.40059364625142, "sample_dt": "2025-04-01", "pol_a": 2.88, "pol_b": 6.1, "unit": "mg/L", "data_formatada": "01/04/2025"}, "geometry": {"type": "Point", "coordinates": [-43.40059364625142, -22.963531872336013]}, "bbox": [-43.40059364625142, -22.963531872336013, -43.40059364625142, -22.963531872336013]}, {"id": "96", "type": "Feature", "properties": {"station_id": 114, "station_name": "Estacao O1", "lat": -20.563321425174973, "lon": -43.03977354112163, "sample_dt": "2025-05-31", "pol_a": 0.91, "pol_b": 9.95, "unit": "mg/L", "data_formatada": "31/05/2025"}, "geometry": {"type": "Point", "coordinates": [-43.03977354112163, -20.563321425174973]}, "bbox": [-43.03977354112163, -20.563321425174973, -43.03977354112163, -20.563321425174973]}, {"id": "197", "type": "Feature", "properties": {"station_id": 115, "station_name": "Estacao P1", "lat": -22.09016645802717, "lon": -43.66131897460973, "sample_dt": "2025-04-01", "pol_a": 9.81, "pol_b": 1.22, "unit": "mg/L", "data_formatada": "01/04/2025"}, "geometry": {"type": "Point", "coordinates": [-43.66131897460973, -22.09016645802717]}, "bbox": [-43.66131897460973, -22.09016645802717, -43.66131897460973, -22.09016645802717]}, {"id": "114", "type": "Feature", "properties": {"station_id": 116, "station_name": "Estacao Q1", "lat": -22.582908942138456, "lon": -43.927266906548965, "sample_dt": "2025-05-31", "pol_a": 2.91, "pol_b": 3.31, "unit": "mg/L", "data_formatada": "31/05/2025"}, "geometry": {"type": "Point", "coordinates": [-43.927266906548965, -22.582908942138456]}, "bbox": [-43.927266906548965, -22.582908942138456, -43.927266906548965, -22.582908942138456]}, {"id": "258", "type": "Feature", "properties": {"station_id": 117, "station_name": "Estacao R1", "lat": -22.5323477072842, "lon": -41.953990615225976, "sample_dt": "2025-06-30", "pol_a": 4.27, "pol_b": 0.98, "unit": "mg/L", "data_formatada": "30/06/2025"}, "geometry": {"type": "Point", "coordinates": [-41.953990615225976, -22.5323477072842]}, "bbox": [-41.953990615225976, -22.5323477072842, -41.953990615225976, -22.5323477072842]}, {"id": "178", "type": "Feature", "properties": {"station_id": 118, "station_name": "Estacao S1", "lat": -20.84014855314802, "lon": -44.41714968437888, "sample_dt": "2025-03-02", "pol_a": 1.97, "pol_b": 9.83, "unit": "mg/L", "data_formatada": "02/03/2025"}, "geometry": {"type": "Point", "coordinates": [-44.41714968437888, -20.84014855314802]}, "bbox": [-44.41714968437888, -20.84014855314802, -44.41714968437888, -20.84014855314802]}, {"id": "64", "type": "Feature", "properties": {"station_id": 119, "station_name": "Estacao T1", "lat": -20.98319949379191, "lon": -41.91878614506497, "sample_dt": "2025-05-31", "pol_a": 2.35, "pol_b": 4.41, "unit": "mg/L", "data_formatada": "31/05/2025"}, "geometry": {"type": "Point", "coordinates": [-41.91878614506497, -20.98319949379191]}, "bbox": [-41.91878614506497, -20.98319949379191, -41.91878614506497, -20.98319949379191]}, {"id": "54", "type": "Feature", "properties": {"station_id": 120, "station_name": "Estacao U1", "lat": -21.40146336769842, "lon": -44.0849407227466, "sample_dt": "2025-04-01", "pol_a": 7.57, "pol_b": 2.88, "unit": "mg/L", "data_formatada": "01/04/2025"}, "geometry": {"type": "Point", "coordinates": [-44.0849407227466, -21.40146336769842]}, "bbox": [-44.0849407227466, -21.40146336769842, -44.0849407227466, -21.40146336769842]}, {"id": "145", "type": "Feature", "properties": {"station_id": 121, "station_name": "Estacao V1", "lat": -22.94699897700589, "lon": -44.25738110014841, "sample_dt": "2025-06-30", "pol_a": 4.64, "pol_b": 7.44, "unit": "mg/L", "data_formatada": "30/06/2025"}, "geometry": {"type": "Point", "coordinates": [-44.25738110014841, -22.94699897700589]}, "bbox": [-44.25738110014841, -22.94699897700589, -44.25738110014841, -22.94699897700589]}, {"id": "152", "type": "Feature", "properties": {"station_id": 122, "station_name": "Estacao W1", "lat": -23.35685161692505, "lon": -42.80188836851777, "sample_dt": "2025-05-31", "pol_a": 8.17, "pol_b": 3.79, "unit": "mg/L", "data_formatada": "31/05/2025"}, "geometry": {"type": "Point", "coordinates": [-42.80188836851777, -23.35685161692505]}, "bbox": [-42.80188836851777, -23.35685161692505, -42.80188836851777, -23.35685161692505]}, {"id": "202", "type": "Feature", "properties": {"station_id": 123, "station_name": "Estacao X1", "lat": -22.105978561181168, "lon": -42.550678952071706, "sample_dt": "2025-03-02", "pol_a": 0.65, "pol_b": 9.37, "unit": "mg/L", "data_formatada": "02/03/2025"}, "geometry": {"type": "Point", "coordinates": [-42.550678952071706, -22.105978561181168]}, "bbox": [-42.550678952071706, -22.105978561181168, -42.550678952071706, -22.105978561181168]}, {"id": "207", "type": "Feature", "properties": {"station_id": 124, "station_name": "Estacao Y1", "lat": -21.996880348254223, "lon": -42.88186765479981, "sample_dt": "2025-03-02", "pol_a": 8.74, "pol_b": 6.55, "unit": "mg/L", "data_formatada": "02/03/2025"}, "geometry": {"type": "Point", "coordinates": [-42.88186765479981, -21.996880348254223]}, "bbox": [-42.88186765479981, -21.996880348254223, -42.88186765479981, -21.996880348254223]}, {"id": "58", "type": "Feature", "properties": {"station_id": 125, "station_name": "Estacao Z1", "lat": -21.0971521159528, "lon": -42.468494972851055, "sample_dt": "2025-05-01", "pol_a": 3.1, "pol_b": 2.54, "unit": "mg/L", "data_formatada": "01/05/2025"}, "geometry": {"type": "Point", "coordinates": [-42.468494972851055, -21.0971521159528]}, "bbox": [-42.468494972851055, -21.0971521159528, -42.468494972851055, -21.0971521159528]}, {"id": "128", "type": "Feature", "properties": {"station_id": 126, "station_name": "Estacao A2", "lat": -22.36822275031607, "lon": -44.3831106030693, "sample_dt": "2025-05-01", "pol_a": 7.08, "pol_b": 3.81, "unit": "mg/L", "data_formatada": "01/05/2025"}, "geometry": {"type": "Point", "coordinates": [-44.3831106030693, -22.36822275031607]}, "bbox": [-44.3831106030693, -22.36822275031607, -44.3831106030693, -22.36822275031607]}, {"id": "42", "type": "Feature", "properties": {"station_id": 127, "station_name": "Estacao B2", "lat": -20.69005554443288, "lon": -44.38244101997306, "sample_dt": "2025-04-01", "pol_a": 7.45, "pol_b": 1.71, "unit": "mg/L", "data_formatada": "01/04/2025"}, "geometry": {"type": "Point", "coordinates": [-44.38244101997306, -20.69005554443288]}, "bbox": [-44.38244101997306, -20.69005554443288, -44.38244101997306, -20.69005554443288]}, {"id": "122", "type": "Feature", "properties": {"station_id": 128, "station_name": "Estacao C2", "lat": -22.74995065235169, "lon": -42.75836796296827, "sample_dt": "2025-05-31", "pol_a": 3.33, "pol_b": 1.45, "unit": "mg/L", "data_formatada": "31/05/2025"}, "geometry": {"type": "Point", "coordinates": [-42.75836796296827, -22.74995065235169]}, "bbox": [-42.75836796296827, -22.74995065235169, -42.75836796296827, -22.74995065235169]}, {"id": "230", "type": "Feature", "properties": {"station_id": 129, "station_name": "Estacao D2", "lat": -23.33954410975789, "lon": -41.62437550935041, "sample_dt": "2025-05-31", "pol_a": 2.52, "pol_b": 9.49, "unit": "mg/L", "data_formatada": "31/05/2025"}, "geometry": {"type": "Point", "coordinates": [-41.62437550935041, -23.33954410975789]}, "bbox": [-41.62437550935041, -23.33954410975789, -41.62437550935041, -23.33954410975789]}, {"id": "50", "type": "Feature", "properties": {"station_id": 130, "station_name": "Estacao E2", "lat": -21.15611184858639, "lon": -44.15960619394765, "sample_dt": "2025-05-01", "pol_a": 7.04, "pol_b": 8.45, "unit": "mg/L", "data_formatada": "01/05/2025"}, "geometry": {"type": "Point", "coordinates": [-44.15960619394765, -21.15611184858639]}, "bbox": [-44.15960619394765, -21.15611184858639, -44.15960619394765, -21.15611184858639]}, {"id": "190", "type": "Feature", "properties": {"station_id": 131, "station_name": "Estacao F2", "lat": -20.899393884067475, "lon": -41.984557708708046, "sample_dt": "2025-05-31", "pol_a": 2.75, "pol_b": 9.12, "unit": "mg/L", "data_formatada": "31/05/2025"}, "geometry": {"type": "Point", "coordinates": [-41.984557708708046, -20.899393884067475]}, "bbox": [-41.984557708708046, -20.899393884067475, -41.984557708708046, -20.899393884067475]}, {"id": "109", "type": "Feature", "properties": {"station_id": 132, "station_name": "Estacao G2", "lat": -21.724333783536142, "lon": -43.44934525989906, "sample_dt": "2025-05-31", "pol_a": 7.54, "pol_b": 7.79, "unit": "mg/L", "data_formatada": "31/05/2025"}, "geometry": {"type": "Point", "coordinates": [-43.44934525989906, -21.724333783536142]}, "bbox": [-43.44934525989906, -21.724333783536142, -43.44934525989906, -21.724333783536142]}, {"id": "23", "type": "Feature", "properties": {"station_id": 133, "station_name": "Estacao H2", "lat": -21.03162894436992, "lon": -42.26736502917011, "sample_dt": "2025-03-02", "pol_a": 1.29, "pol_b": 5.52, "unit": "mg/L", "data_formatada": "02/03/2025"}, "geometry": {"type": "Point", "coordinates": [-42.26736502917011, -21.03162894436992]}, "bbox": [-42.26736502917011, -21.03162894436992, -42.26736502917011, -21.03162894436992]}, {"id": "47", "type": "Feature", "properties": {"station_id": 134, "station_name": "Estacao I2", "lat": -22.190992505180333, "lon": -42.0936722529198, "sample_dt": "2025-05-01", "pol_a": 1.22, "pol_b": 2.08, "unit": "mg/L", "data_formatada": "01/05/2025"}, "geometry": {"type": "Point", "coordinates": [-42.0936722529198, -22.190992505180333]}, "bbox": [-42.0936722529198, -22.190992505180333, -42.0936722529198, -22.190992505180333]}, {"id": "166", "type": "Feature", "properties": {"station_id": 135, "station_name": "Estacao J2", "lat": -22.849572680240527, "lon": -43.61651815948171, "sample_dt": "2025-06-30", "pol_a": 4.19, "pol_b": 2.68, "unit": "mg/L", "data_formatada": "30/06/2025"}, "geometry": {"type": "Point", "coordinates": [-43.61651815948171, -22.849572680240527]}, "bbox": [-43.61651815948171, -22.849572680240527, -43.61651815948171, -22.849572680240527]}, {"id": "127", "type": "Feature", "properties": {"station_id": 136, "station_name": "Estacao K2", "lat": -22.702186225107283, "lon": -43.4189647143842, "sample_dt": "2025-05-01", "pol_a": 1.22, "pol_b": 9.44, "unit": "mg/L", "data_formatada": "01/05/2025"}, "geometry": {"type": "Point", "coordinates": [-43.4189647143842, -22.702186225107283]}, "bbox": [-43.4189647143842, -22.702186225107283, -43.4189647143842, -22.702186225107283]}, {"id": "88", "type": "Feature", "properties": {"station_id": 137, "station_name": "Estacao L2", "lat": -22.250082826784563, "lon": -42.75651213645752, "sample_dt": "2025-06-30", "pol_a": 78.38, "pol_b": 5.91, "unit": "mg/L", "data_formatada": "30/06/2025"}, "geometry": {"type": "Point", "coordinates": [-42.75651213645752, -22.250082826784563]}, "bbox": [-42.75651213645752, -22.250082826784563, -42.75651213645752, -22.250082826784563]}, {"id": "219", "type": "Feature", "properties": {"station_id": 138, "station_name": "Estacao M2", "lat": -23.30946451123, "lon": -44.38953439709203, "sample_dt": "2025-03-02", "pol_a": 5.58, "pol_b": 7.62, "unit": "mg/L", "data_formatada": "02/03/2025"}, "geometry": {"type": "Point", "coordinates": [-44.38953439709203, -23.30946451123]}, "bbox": [-44.38953439709203, -23.30946451123, -44.38953439709203, -23.30946451123]}, {"id": "52", "type": "Feature", "properties": {"station_id": 139, "station_name": "Estacao N2", "lat": -20.76050274322707, "lon": -42.74455140302359, "sample_dt": "2025-04-01", "pol_a": 3.11, "pol_b": 2.47, "unit": "mg/L", "data_formatada": "01/04/2025"}, "geometry": {"type": "Point", "coordinates": [-42.74455140302359, -20.76050274322707]}, "bbox": [-42.74455140302359, -20.76050274322707, -42.74455140302359, -20.76050274322707]}, {"id": "216", "type": "Feature", "properties": {"station_id": 140, "station_name": "Estacao O2", "lat": -20.865337997562424, "lon": -42.22900260348332, "sample_dt": "2025-05-31", "pol_a": 8.02, "pol_b": 6.1, "unit": "mg/L", "data_formatada": "31/05/2025"}, "geometry": {"type": "Point", "coordinates": [-42.22900260348332, -20.865337997562424]}, "bbox": [-42.22900260348332, -20.865337997562424, -42.22900260348332, -20.865337997562424]}, {"id": "191", "type": "Feature", "properties": {"station_id": 141, "station_name": "Estacao P2", "lat": -22.05986209894457, "lon": -43.23839266400478, "sample_dt": "2025-03-02", "pol_a": 6.36, "pol_b": 9.81, "unit": "mg/L", "data_formatada": "02/03/2025"}, "geometry": {"type": "Point", "coordinates": [-43.23839266400478, -22.05986209894457]}, "bbox": [-43.23839266400478, -22.05986209894457, -43.23839266400478, -22.05986209894457]}, {"id": "201", "type": "Feature", "properties": {"station_id": 142, "station_name": "Estacao Q2", "lat": -21.675736451374345, "lon": -42.59006703513315, "sample_dt": "2025-05-31", "pol_a": 4.86, "pol_b": 8.5, "unit": "mg/L", "data_formatada": "31/05/2025"}, "geometry": {"type": "Point", "coordinates": [-42.59006703513315, -21.675736451374345]}, "bbox": [-42.59006703513315, -21.675736451374345, -42.59006703513315, -21.675736451374345]}, {"id": "87", "type": "Feature", "properties": {"station_id": 143, "station_name": "Estacao R2", "lat": -21.193246776053808, "lon": -44.3012920664444, "sample_dt": "2025-04-01", "pol_a": 5.6, "pol_b": 4.87, "unit": "mg/L", "data_formatada": "01/04/2025"}, "geometry": {"type": "Point", "coordinates": [-44.3012920664444, -21.193246776053808]}, "bbox": [-44.3012920664444, -21.193246776053808, -44.3012920664444, -21.193246776053808]}, {"id": "195", "type": "Feature", "properties": {"station_id": 144, "station_name": "Estacao S2", "lat": -21.74570168215254, "lon": -43.29909853326916, "sample_dt": "2025-04-01", "pol_a": 9.74, "pol_b": 6.22, "unit": "mg/L", "data_formatada": "01/04/2025"}, "geometry": {"type": "Point", "coordinates": [-43.29909853326916, -21.74570168215254]}, "bbox": [-43.29909853326916, -21.74570168215254, -43.29909853326916, -21.74570168215254]}, {"id": "28", "type": "Feature", "properties": {"station_id": 145, "station_name": "Estacao T2", "lat": -22.82845280228104, "lon": -42.03462808946665, "sample_dt": "2025-03-02", "pol_a": 5.58, "pol_b": 3.88, "unit": "mg/L", "data_formatada": "02/03/2025"}, "geometry": {"type": "Point", "coordinates": [-42.03462808946665, -22.82845280228104]}, "bbox": [-42.03462808946665, -22.82845280228104, -42.03462808946665, -22.82845280228104]}, {"id": "43", "type": "Feature", "properties": {"station_id": 146, "station_name": "Estacao U2", "lat": -20.817348211312225, "lon": -44.11375480510107, "sample_dt": "2025-04-01", "pol_a": 1.99, "pol_b": 4.08, "unit": "mg/L", "data_formatada": "01/04/2025"}, "geometry": {"type": "Point", "coordinates": [-44.11375480510107, -20.817348211312225]}, "bbox": [-44.11375480510107, -20.817348211312225, -44.11375480510107, -20.817348211312225]}, {"id": "182", "type": "Feature", "properties": {"station_id": 147, "station_name": "Estacao V2", "lat": -23.49221492684906, "lon": -41.89509667889324, "sample_dt": "2025-06-30", "pol_a": 7.03, "pol_b": 38.52, "unit": "mg/L", "data_formatada": "30/06/2025"}, "geometry": {"type": "Point", "coordinates": [-41.89509667889324, -23.49221492684906]}, "bbox": [-41.89509667889324, -23.49221492684906, -41.89509667889324, -23.49221492684906]}, {"id": "71", "type": "Feature", "properties": {"station_id": 148, "station_name": "Estacao W2", "lat": -21.25115130397424, "lon": -44.40858354179922, "sample_dt": "2025-04-01", "pol_a": 5.86, "pol_b": 8.49, "unit": "mg/L", "data_formatada": "01/04/2025"}, "geometry": {"type": "Point", "coordinates": [-44.40858354179922, -21.25115130397424]}, "bbox": [-44.40858354179922, -21.25115130397424, -44.40858354179922, -21.25115130397424]}, {"id": "253", "type": "Feature", "properties": {"station_id": 149, "station_name": "Estacao X2", "lat": -23.232387013863832, "lon": -42.89399330795343, "sample_dt": "2025-05-31", "pol_a": 5.86, "pol_b": 4.1, "unit": "mg/L", "data_formatada": "31/05/2025"}, "geometry": {"type": "Point", "coordinates": [-42.89399330795343, -23.232387013863832]}, "bbox": [-42.89399330795343, -23.232387013863832, -42.89399330795343, -23.232387013863832]}], "bbox": [-44.41714968437888, -23.49221492684906, -41.51123890072623, -20.563321425174973]};
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(geojsonData));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "dados_poluentes.geojson");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+        document.addEventListener("DOMContentLoaded", function() {
+            setTimeout(function() {
+                const layerControl = document.querySelector('.leaflet-control-layers');
+                const targetContainer = document.getElementById('layer-control-container');
+                if (layerControl && targetContainer) {
+                    targetContainer.appendChild(layerControl);
+                    layerControl.style.width = '100%';
+                    layerControl.style.border = 'none';
+                    layerControl.style.boxShadow = 'none';
+                }
+            }, 500);
+            toggleSidebar();
+        });
+    </script>
+    <style>
+        .sidebar-right
+        { position: fixed;
+        top: 0;
+        right: 0;
+        height: 100%;
+        width: 350px;
+        background-color: rgba(255, 255, 255, 0.85);
+        padding: 20px;
+        box-shadow: -2px 0 5px rgba(0,0,0,0.2);
+        z-index: 1000;
+        transition: right 0.3s;
+        font-family: Arial, sans-serif;
+        box-sizing: border-box; }
+        .sidebar-right.collapsed { right: -350px; }
+        #sidebar-toggle { position: absolute; left: -30px; top: 10px; width: 30px; height: 30px; background-color: #fff; border: 1px solid #ccc; cursor: pointer; font-size: 18px; }
+        .download-btn { width: 100%; padding: 10px; font-size: 14px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px; }
+        #layer-control-container .leaflet-control-layers-base label, #layer-control-container .leaflet-control-layers-overlays label { display: block; margin-bottom: 5px; font-size: 14px; }
+    </style>
+    
+    
+    <div style="position: fixed; bottom: 30px; right: 85px; width: 180px; z-index:1000;
+                background-color: rgba(255, 255, 255, 0.85);
+                border:2px solid grey;
+                border-radius: 8px;
+                padding: 10px;
+                font-family: Arial, sans-serif;
+                font-size: 12px;">
+        <h4 style="margin-top:0; margin-bottom: 10px; text-align: center;">Legenda</h4>
+        <p style="margin: 5px 0;"><strong>Barras de Concentração:</strong></p>
+        <div style="margin-bottom: 10px;">
+            <i style="background:#9400D3; width: 12px; height: 12px; display: inline-block; border: 1px solid #555;"></i> Poluente A<br>
+            <i style="background:	#8B008B; width: 12px; height: 12px; display: inline-block; border: 1px solid #555;"></i> Poluente B
+        </div>
+        <p style="margin: 5px 0;"><strong>Mapa de Calor:</strong></p>
+        <div style="background: linear-gradient(to right, blue, lime, yellow, red); height: 15px; border: 1px solid #555;"></div>
+        <div style="display: flex; justify-content: space-between;">
+            <span>Baixa</span>
+            <span>Alta</span>
+        </div>
+    </div>
+    
+    
+            <div class="folium-map" id="map_b374aa8744c5f879269b3549c5af2c4f" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_b374aa8744c5f879269b3549c5af2c4f = L.map(
+                "map_b374aa8744c5f879269b3549c5af2c4f",
+                {
+                    center: [-22.02921595161267, -42.96858901647321],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 8,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+            L.control.scale().addTo(map_b374aa8744c5f879269b3549c5af2c4f);
+
+            
+
+        
+    
+            var tile_layer_3522e06248306c83b072cddf62eb7927 = L.tileLayer(
+                "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+                {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"https://carto.com/attributions\"\u003eCARTO\u003c/a\u003e", "detectRetina": false, "maxNativeZoom": 20, "maxZoom": 20, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abcd", "tms": false}
+            );
+        
+    
+            tile_layer_3522e06248306c83b072cddf62eb7927.addTo(map_b374aa8744c5f879269b3549c5af2c4f);
+        
+    
+            var tile_layer_ae4fdda950b7ca842808cf17f5fdca5f = L.tileLayer(
+                "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+                {"attribution": "Esri", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+        
+    
+            tile_layer_ae4fdda950b7ca842808cf17f5fdca5f.addTo(map_b374aa8744c5f879269b3549c5af2c4f);
+        
+    
+            var feature_group_05f7563c218d50453264c5ff1378a69d = L.featureGroup(
+                {}
+            );
+        
+    
+            var marker_6bac694e3e26db09ed0188018aa8e58c = L.marker(
+                [-22.776923601921965, -42.450209443523626],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_8b6e2459bed83cb5e0c1e79ce2ae0fae = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 8.50\" style=\"background-color: #9400D3; width: 12px; height: 9.54457738324971px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_6bac694e3e26db09ed0188018aa8e58c.setIcon(div_icon_8b6e2459bed83cb5e0c1e79ce2ae0fae);
+        
+    
+            marker_6bac694e3e26db09ed0188018aa8e58c.bindTooltip(
+                `<div>
+                     <strong>Estacao A1</strong><br>Data: 31/05/2025<br>Poluente A: 8.50
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_1624dd72bdae2cd45fd3490a39e18d21 = L.marker(
+                [-22.31454929199456, -41.720023402618615],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_f8d153f2ce2d2374a18bcd896b104f4b = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 3.31\" style=\"background-color: #9400D3; width: 12px; height: 6.539945966808182px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_1624dd72bdae2cd45fd3490a39e18d21.setIcon(div_icon_f8d153f2ce2d2374a18bcd896b104f4b);
+        
+    
+            marker_1624dd72bdae2cd45fd3490a39e18d21.bindTooltip(
+                `<div>
+                     <strong>Estacao B1</strong><br>Data: 30/06/2025<br>Poluente A: 3.31
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_1ea87dfcedf13ccff6d1b67086f389a9 = L.marker(
+                [-23.453090779776417, -43.22979555788089],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_bb4cd5811c8e8a16dc638159753d9ee4 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 6.69\" style=\"background-color: #9400D3; width: 12px; height: 8.496719413353919px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_1ea87dfcedf13ccff6d1b67086f389a9.setIcon(div_icon_bb4cd5811c8e8a16dc638159753d9ee4);
+        
+    
+            marker_1ea87dfcedf13ccff6d1b67086f389a9.bindTooltip(
+                `<div>
+                     <strong>Estacao C1</strong><br>Data: 01/05/2025<br>Poluente A: 6.69
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_980ab3b4e6419772fa4381c90dc41e48 = L.marker(
+                [-20.9498842666306, -43.15164797758539],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_81b5c6e2c4d449d4109a10ab08af7621 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 2.93\" style=\"background-color: #9400D3; width: 12px; height: 6.319953685835585px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_980ab3b4e6419772fa4381c90dc41e48.setIcon(div_icon_81b5c6e2c4d449d4109a10ab08af7621);
+        
+    
+            marker_980ab3b4e6419772fa4381c90dc41e48.bindTooltip(
+                `<div>
+                     <strong>Estacao D1</strong><br>Data: 30/06/2025<br>Poluente A: 2.93
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_6b94cda1cbb2b7fdfe84412918ea1430 = L.marker(
+                [-21.36801133094264, -44.1673275375645],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_a938e64147c6ec4f95c879faa1497c93 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 7.10\" style=\"background-color: #9400D3; width: 12px; height: 8.734079505982246px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_6b94cda1cbb2b7fdfe84412918ea1430.setIcon(div_icon_a938e64147c6ec4f95c879faa1497c93);
+        
+    
+            marker_6b94cda1cbb2b7fdfe84412918ea1430.bindTooltip(
+                `<div>
+                     <strong>Estacao E1</strong><br>Data: 30/06/2025<br>Poluente A: 7.10
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_c8bd88b5d9c2eca546916e5a08628fdc = L.marker(
+                [-21.62693785559862, -43.61309894248686],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_9d35bf8b38d1e9ffb6c309e8f5e80990 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 1.66\" style=\"background-color: #9400D3; width: 12px; height: 5.584716325742956px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_c8bd88b5d9c2eca546916e5a08628fdc.setIcon(div_icon_9d35bf8b38d1e9ffb6c309e8f5e80990);
+        
+    
+            marker_c8bd88b5d9c2eca546916e5a08628fdc.bindTooltip(
+                `<div>
+                     <strong>Estacao F1</strong><br>Data: 01/04/2025<br>Poluente A: 1.66
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_9b6e9b8967022913d5763314eda2f8a5 = L.marker(
+                [-20.779514675362737, -43.683603251846094],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_7069223f9c4a5e47803a4bef0328566e = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 3.06\" style=\"background-color: #9400D3; width: 12px; height: 6.395214203010421px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_9b6e9b8967022913d5763314eda2f8a5.setIcon(div_icon_7069223f9c4a5e47803a4bef0328566e);
+        
+    
+            marker_9b6e9b8967022913d5763314eda2f8a5.bindTooltip(
+                `<div>
+                     <strong>Estacao G1</strong><br>Data: 01/05/2025<br>Poluente A: 3.06
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_20d1eeba3c845db0a0da5eecc81d5800 = L.marker(
+                [-22.995126873481208, -43.84370734128079],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_59b8e3752b97d186312306b25abd4f6e = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 9.98\" style=\"background-color: #9400D3; width: 12px; height: 10.401389424932459px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_20d1eeba3c845db0a0da5eecc81d5800.setIcon(div_icon_59b8e3752b97d186312306b25abd4f6e);
+        
+    
+            marker_20d1eeba3c845db0a0da5eecc81d5800.bindTooltip(
+                `<div>
+                     <strong>Estacao H1</strong><br>Data: 01/05/2025<br>Poluente A: 9.98
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_8fdd49c9b091ac9ea69f44bea4e8051b = L.marker(
+                [-20.57015513250204, -43.26688896004531],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_5c5bf1c8fb13144ff7d6102f70e6e046 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 1.27\" style=\"background-color: #9400D3; width: 12px; height: 5.358934774218448px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_8fdd49c9b091ac9ea69f44bea4e8051b.setIcon(div_icon_5c5bf1c8fb13144ff7d6102f70e6e046);
+        
+    
+            marker_8fdd49c9b091ac9ea69f44bea4e8051b.bindTooltip(
+                `<div>
+                     <strong>Estacao I1</strong><br>Data: 01/05/2025<br>Poluente A: 1.27
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_29f46b96c3e244994fa06705769b9712 = L.marker(
+                [-22.77352018516772, -42.09058073086031],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_867623202f540a8eeb4c7a11c007ad40 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 8.19\" style=\"background-color: #9400D3; width: 12px; height: 9.365109996140486px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_29f46b96c3e244994fa06705769b9712.setIcon(div_icon_867623202f540a8eeb4c7a11c007ad40);
+        
+    
+            marker_29f46b96c3e244994fa06705769b9712.bindTooltip(
+                `<div>
+                     <strong>Estacao J1</strong><br>Data: 30/06/2025<br>Poluente A: 8.19
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_923adf1041aa4cad072e3cdce1297f29 = L.marker(
+                [-23.211470346725736, -41.67843020653119],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_6385a0cdd075d48658905e5d5af43d83 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 9.83\" style=\"background-color: #9400D3; width: 12px; height: 10.314550366653801px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_923adf1041aa4cad072e3cdce1297f29.setIcon(div_icon_6385a0cdd075d48658905e5d5af43d83);
+        
+    
+            marker_923adf1041aa4cad072e3cdce1297f29.bindTooltip(
+                `<div>
+                     <strong>Estacao K1</strong><br>Data: 31/05/2025<br>Poluente A: 9.83
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_1f4b4849ec0ed2ddd33c8863e2978b98 = L.marker(
+                [-22.717512475508773, -41.51123890072623],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_a2e400d0fc0c341a5d6722c5d1098377 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 4.34\" style=\"background-color: #9400D3; width: 12px; height: 7.136240833654959px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_1f4b4849ec0ed2ddd33c8863e2978b98.setIcon(div_icon_a2e400d0fc0c341a5d6722c5d1098377);
+        
+    
+            marker_1f4b4849ec0ed2ddd33c8863e2978b98.bindTooltip(
+                `<div>
+                     <strong>Estacao L1</strong><br>Data: 01/05/2025<br>Poluente A: 4.34
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_9f8c16446d4fa2189d128d8503f43a1b = L.marker(
+                [-20.94721465369746, -41.69309501733716],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_2e18dab36eb8c0cb22613e6c3f7b0ed8 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 0.67\" style=\"background-color: #9400D3; width: 12px; height: 5.0115785411038205px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_9f8c16446d4fa2189d128d8503f43a1b.setIcon(div_icon_2e18dab36eb8c0cb22613e6c3f7b0ed8);
+        
+    
+            marker_9f8c16446d4fa2189d128d8503f43a1b.bindTooltip(
+                `<div>
+                     <strong>Estacao M1</strong><br>Data: 30/06/2025<br>Poluente A: 0.67
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_46735d9b00f4a742ac0519ffab439de5 = L.marker(
+                [-22.963531872336013, -43.40059364625142],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_5f94e601c3727b0d5ce7e32d5a972e86 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 2.88\" style=\"background-color: #9400D3; width: 12px; height: 6.291007333076033px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_46735d9b00f4a742ac0519ffab439de5.setIcon(div_icon_5f94e601c3727b0d5ce7e32d5a972e86);
+        
+    
+            marker_46735d9b00f4a742ac0519ffab439de5.bindTooltip(
+                `<div>
+                     <strong>Estacao N1</strong><br>Data: 01/04/2025<br>Poluente A: 2.88
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_ca31472f01f087091225afa876b399e7 = L.marker(
+                [-20.563321425174973, -43.03977354112163],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_0d325f91384898fc70c70df545c0ed6d = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 0.91\" style=\"background-color: #9400D3; width: 12px; height: 5.150521034349672px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_ca31472f01f087091225afa876b399e7.setIcon(div_icon_0d325f91384898fc70c70df545c0ed6d);
+        
+    
+            marker_ca31472f01f087091225afa876b399e7.bindTooltip(
+                `<div>
+                     <strong>Estacao O1</strong><br>Data: 31/05/2025<br>Poluente A: 0.91
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_4e61f8cfc43b8c663acdfc59ebe060d5 = L.marker(
+                [-22.09016645802717, -43.66131897460973],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_9bb5d9e193344506cb0d7403473864e3 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 9.81\" style=\"background-color: #9400D3; width: 12px; height: 10.302971825549982px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_4e61f8cfc43b8c663acdfc59ebe060d5.setIcon(div_icon_9bb5d9e193344506cb0d7403473864e3);
+        
+    
+            marker_4e61f8cfc43b8c663acdfc59ebe060d5.bindTooltip(
+                `<div>
+                     <strong>Estacao P1</strong><br>Data: 01/04/2025<br>Poluente A: 9.81
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_0f7578dc927c9052bf37da46d275ae2f = L.marker(
+                [-22.582908942138456, -43.927266906548965],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_2c9bbf8df5ce870a1109aa83be9d1a90 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 2.91\" style=\"background-color: #9400D3; width: 12px; height: 6.308375144731764px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_0f7578dc927c9052bf37da46d275ae2f.setIcon(div_icon_2c9bbf8df5ce870a1109aa83be9d1a90);
+        
+    
+            marker_0f7578dc927c9052bf37da46d275ae2f.bindTooltip(
+                `<div>
+                     <strong>Estacao Q1</strong><br>Data: 31/05/2025<br>Poluente A: 2.91
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_bb6b033937c148e095acbcbdd2083bce = L.marker(
+                [-22.5323477072842, -41.953990615225976],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_74daeb3f0d73147b4e3cd00a3a0f6a1e = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 4.27\" style=\"background-color: #9400D3; width: 12px; height: 7.095715939791587px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_bb6b033937c148e095acbcbdd2083bce.setIcon(div_icon_74daeb3f0d73147b4e3cd00a3a0f6a1e);
+        
+    
+            marker_bb6b033937c148e095acbcbdd2083bce.bindTooltip(
+                `<div>
+                     <strong>Estacao R1</strong><br>Data: 30/06/2025<br>Poluente A: 4.27
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_91376ecc76d27003339ed9e6435fc60d = L.marker(
+                [-20.84014855314802, -44.41714968437888],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_5aa95b5e61540c52d3b2a9b60ed125d3 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 1.97\" style=\"background-color: #9400D3; width: 12px; height: 5.764183712852181px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_91376ecc76d27003339ed9e6435fc60d.setIcon(div_icon_5aa95b5e61540c52d3b2a9b60ed125d3);
+        
+    
+            marker_91376ecc76d27003339ed9e6435fc60d.bindTooltip(
+                `<div>
+                     <strong>Estacao S1</strong><br>Data: 02/03/2025<br>Poluente A: 1.97
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_375649a4e581294fcd1077df8e11799f = L.marker(
+                [-20.98319949379191, -41.91878614506497],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_ef642820363256837cd6f29649cad1c1 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 2.35\" style=\"background-color: #9400D3; width: 12px; height: 5.9841759938247785px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_375649a4e581294fcd1077df8e11799f.setIcon(div_icon_ef642820363256837cd6f29649cad1c1);
+        
+    
+            marker_375649a4e581294fcd1077df8e11799f.bindTooltip(
+                `<div>
+                     <strong>Estacao T1</strong><br>Data: 31/05/2025<br>Poluente A: 2.35
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_eeb406bca9d63ee190b7eda03593de54 = L.marker(
+                [-21.40146336769842, -44.0849407227466],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_9db66fa02c1f44d2cf88074bdd848b30 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 7.57\" style=\"background-color: #9400D3; width: 12px; height: 9.006175221922039px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_eeb406bca9d63ee190b7eda03593de54.setIcon(div_icon_9db66fa02c1f44d2cf88074bdd848b30);
+        
+    
+            marker_eeb406bca9d63ee190b7eda03593de54.bindTooltip(
+                `<div>
+                     <strong>Estacao U1</strong><br>Data: 01/04/2025<br>Poluente A: 7.57
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_a82d9557be2c3d9846811f62aa9f9d96 = L.marker(
+                [-22.94699897700589, -44.25738110014841],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_b63d0ee5e6cbc83c704fb32b656d4d02 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 4.64\" style=\"background-color: #9400D3; width: 12px; height: 7.309918950212273px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_a82d9557be2c3d9846811f62aa9f9d96.setIcon(div_icon_b63d0ee5e6cbc83c704fb32b656d4d02);
+        
+    
+            marker_a82d9557be2c3d9846811f62aa9f9d96.bindTooltip(
+                `<div>
+                     <strong>Estacao V1</strong><br>Data: 30/06/2025<br>Poluente A: 4.64
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_abf764a93a7914112bd49d65be8081b4 = L.marker(
+                [-23.35685161692505, -42.80188836851777],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_177b525770c1af7c0f0777f6e1ad0129 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 8.17\" style=\"background-color: #9400D3; width: 12px; height: 9.353531455036666px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_abf764a93a7914112bd49d65be8081b4.setIcon(div_icon_177b525770c1af7c0f0777f6e1ad0129);
+        
+    
+            marker_abf764a93a7914112bd49d65be8081b4.bindTooltip(
+                `<div>
+                     <strong>Estacao W1</strong><br>Data: 31/05/2025<br>Poluente A: 8.17
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_5c5f89a113dfc30882758cc1381bbb4a = L.marker(
+                [-22.105978561181168, -42.550678952071706],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_2d36fe0f59c4523da5f0c94a29efad58 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 0.65\" style=\"background-color: #9400D3; width: 12px; height: 5.0px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_5c5f89a113dfc30882758cc1381bbb4a.setIcon(div_icon_2d36fe0f59c4523da5f0c94a29efad58);
+        
+    
+            marker_5c5f89a113dfc30882758cc1381bbb4a.bindTooltip(
+                `<div>
+                     <strong>Estacao X1</strong><br>Data: 02/03/2025<br>Poluente A: 0.65
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_b4572626b3398134192f6282358a2941 = L.marker(
+                [-21.996880348254223, -42.88186765479981],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_a8726ab0b0d6a8119a63215fabe86f39 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 8.74\" style=\"background-color: #9400D3; width: 12px; height: 9.683519876495563px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_b4572626b3398134192f6282358a2941.setIcon(div_icon_a8726ab0b0d6a8119a63215fabe86f39);
+        
+    
+            marker_b4572626b3398134192f6282358a2941.bindTooltip(
+                `<div>
+                     <strong>Estacao Y1</strong><br>Data: 02/03/2025<br>Poluente A: 8.74
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_69c12f77cf2e8eaea44a1133de11a91e = L.marker(
+                [-21.0971521159528, -42.468494972851055],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_d10a25e87515a3803765c9cf2ee92fc6 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 3.10\" style=\"background-color: #9400D3; width: 12px; height: 6.418371285218063px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_69c12f77cf2e8eaea44a1133de11a91e.setIcon(div_icon_d10a25e87515a3803765c9cf2ee92fc6);
+        
+    
+            marker_69c12f77cf2e8eaea44a1133de11a91e.bindTooltip(
+                `<div>
+                     <strong>Estacao Z1</strong><br>Data: 01/05/2025<br>Poluente A: 3.10
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_76ae285e6b925e87290089a025ec953c = L.marker(
+                [-22.36822275031607, -44.3831106030693],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_d266e37a77d46d1519624956319b35c3 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 7.08\" style=\"background-color: #9400D3; width: 12px; height: 8.722500964878424px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_76ae285e6b925e87290089a025ec953c.setIcon(div_icon_d266e37a77d46d1519624956319b35c3);
+        
+    
+            marker_76ae285e6b925e87290089a025ec953c.bindTooltip(
+                `<div>
+                     <strong>Estacao A2</strong><br>Data: 01/05/2025<br>Poluente A: 7.08
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_3ca5ef36ec2bf4ebb42796ac21761980 = L.marker(
+                [-20.69005554443288, -44.38244101997306],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_feedcc2c5c0ab88e9f58160cbfc51f26 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 7.45\" style=\"background-color: #9400D3; width: 12px; height: 8.936703975299112px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_3ca5ef36ec2bf4ebb42796ac21761980.setIcon(div_icon_feedcc2c5c0ab88e9f58160cbfc51f26);
+        
+    
+            marker_3ca5ef36ec2bf4ebb42796ac21761980.bindTooltip(
+                `<div>
+                     <strong>Estacao B2</strong><br>Data: 01/04/2025<br>Poluente A: 7.45
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_e3b40d5fea997a0b014a1c946af24041 = L.marker(
+                [-22.74995065235169, -42.75836796296827],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_937d5de2c757aad4096d00e14c965366 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 3.33\" style=\"background-color: #9400D3; width: 12px; height: 6.551524507912004px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_e3b40d5fea997a0b014a1c946af24041.setIcon(div_icon_937d5de2c757aad4096d00e14c965366);
+        
+    
+            marker_e3b40d5fea997a0b014a1c946af24041.bindTooltip(
+                `<div>
+                     <strong>Estacao C2</strong><br>Data: 31/05/2025<br>Poluente A: 3.33
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_700959a9c219460d48e79a5e916bd605 = L.marker(
+                [-23.33954410975789, -41.62437550935041],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_8d5b797adf7b3579d8a000dbc626d505 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 2.52\" style=\"background-color: #9400D3; width: 12px; height: 6.082593593207256px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_700959a9c219460d48e79a5e916bd605.setIcon(div_icon_8d5b797adf7b3579d8a000dbc626d505);
+        
+    
+            marker_700959a9c219460d48e79a5e916bd605.bindTooltip(
+                `<div>
+                     <strong>Estacao D2</strong><br>Data: 31/05/2025<br>Poluente A: 2.52
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_376daddc471561f1d83ac3b3071154e3 = L.marker(
+                [-21.15611184858639, -44.15960619394765],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_3993cb428aaa79372c04e8bd4e6c6880 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 7.04\" style=\"background-color: #9400D3; width: 12px; height: 8.699343882670783px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_376daddc471561f1d83ac3b3071154e3.setIcon(div_icon_3993cb428aaa79372c04e8bd4e6c6880);
+        
+    
+            marker_376daddc471561f1d83ac3b3071154e3.bindTooltip(
+                `<div>
+                     <strong>Estacao E2</strong><br>Data: 01/05/2025<br>Poluente A: 7.04
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_102d9819367144da0740af2cbdd36754 = L.marker(
+                [-20.899393884067475, -41.984557708708046],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_dfdcf59ffe9ef956c23c358b3c8a103d = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 2.75\" style=\"background-color: #9400D3; width: 12px; height: 6.215746815901197px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_102d9819367144da0740af2cbdd36754.setIcon(div_icon_dfdcf59ffe9ef956c23c358b3c8a103d);
+        
+    
+            marker_102d9819367144da0740af2cbdd36754.bindTooltip(
+                `<div>
+                     <strong>Estacao F2</strong><br>Data: 31/05/2025<br>Poluente A: 2.75
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_cdf29311700102c6ebaf6f175b4ad3f5 = L.marker(
+                [-21.724333783536142, -43.44934525989906],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_f8c83794d242143cac07827528b3b9c2 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 7.54\" style=\"background-color: #9400D3; width: 12px; height: 8.988807410266308px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_cdf29311700102c6ebaf6f175b4ad3f5.setIcon(div_icon_f8c83794d242143cac07827528b3b9c2);
+        
+    
+            marker_cdf29311700102c6ebaf6f175b4ad3f5.bindTooltip(
+                `<div>
+                     <strong>Estacao G2</strong><br>Data: 31/05/2025<br>Poluente A: 7.54
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_d3026de4bbaf14ed98aaf5be623bf5ab = L.marker(
+                [-21.03162894436992, -42.26736502917011],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_9c609e8b53b25a69e48bb6ef137bb571 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 1.29\" style=\"background-color: #9400D3; width: 12px; height: 5.3705133153222695px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_d3026de4bbaf14ed98aaf5be623bf5ab.setIcon(div_icon_9c609e8b53b25a69e48bb6ef137bb571);
+        
+    
+            marker_d3026de4bbaf14ed98aaf5be623bf5ab.bindTooltip(
+                `<div>
+                     <strong>Estacao H2</strong><br>Data: 02/03/2025<br>Poluente A: 1.29
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_369521b8ed883f1313650646f0707a4e = L.marker(
+                [-22.190992505180333, -42.0936722529198],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_53f4198f66d0c115c3db2ba5b70a7470 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 1.22\" style=\"background-color: #9400D3; width: 12px; height: 5.329988421458896px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_369521b8ed883f1313650646f0707a4e.setIcon(div_icon_53f4198f66d0c115c3db2ba5b70a7470);
+        
+    
+            marker_369521b8ed883f1313650646f0707a4e.bindTooltip(
+                `<div>
+                     <strong>Estacao I2</strong><br>Data: 01/05/2025<br>Poluente A: 1.22
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_954a28c179f760856f140c39873ef50b = L.marker(
+                [-22.849572680240527, -43.61651815948171],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_647b347b68d59121b894be845753905e = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 4.19\" style=\"background-color: #9400D3; width: 12px; height: 7.049401775376303px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_954a28c179f760856f140c39873ef50b.setIcon(div_icon_647b347b68d59121b894be845753905e);
+        
+    
+            marker_954a28c179f760856f140c39873ef50b.bindTooltip(
+                `<div>
+                     <strong>Estacao J2</strong><br>Data: 30/06/2025<br>Poluente A: 4.19
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_87be840a4586cfc3516df55420967ce0 = L.marker(
+                [-22.702186225107283, -43.4189647143842],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_4d86aa0bd0464ad37737af82d66fb262 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 1.22\" style=\"background-color: #9400D3; width: 12px; height: 5.329988421458896px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_87be840a4586cfc3516df55420967ce0.setIcon(div_icon_4d86aa0bd0464ad37737af82d66fb262);
+        
+    
+            marker_87be840a4586cfc3516df55420967ce0.bindTooltip(
+                `<div>
+                     <strong>Estacao K2</strong><br>Data: 01/05/2025<br>Poluente A: 1.22
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_8858d429ba107b9fd8e1d339a0a6dde8 = L.marker(
+                [-22.250082826784563, -42.75651213645752],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_6bcf7d285ab3d32d63e5b454270729cd = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 78.38\" style=\"background-color: #9400D3; width: 12px; height: 50.0px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_8858d429ba107b9fd8e1d339a0a6dde8.setIcon(div_icon_6bcf7d285ab3d32d63e5b454270729cd);
+        
+    
+            marker_8858d429ba107b9fd8e1d339a0a6dde8.bindTooltip(
+                `<div>
+                     <strong>Estacao L2</strong><br>Data: 30/06/2025<br>Poluente A: 78.38
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_49dd421bf4d4362ec09c4e301d40baab = L.marker(
+                [-23.30946451123, -44.38953439709203],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_ce2769db3d6fd9585ac2d655d4885d79 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 5.58\" style=\"background-color: #9400D3; width: 12px; height: 7.854110382091856px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_49dd421bf4d4362ec09c4e301d40baab.setIcon(div_icon_ce2769db3d6fd9585ac2d655d4885d79);
+        
+    
+            marker_49dd421bf4d4362ec09c4e301d40baab.bindTooltip(
+                `<div>
+                     <strong>Estacao M2</strong><br>Data: 02/03/2025<br>Poluente A: 5.58
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_184f143971905411728158af54b6354a = L.marker(
+                [-20.76050274322707, -42.74455140302359],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_1bbaeb7aeccaa0ab34da73dae61ce276 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 3.11\" style=\"background-color: #9400D3; width: 12px; height: 6.424160555769973px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_184f143971905411728158af54b6354a.setIcon(div_icon_1bbaeb7aeccaa0ab34da73dae61ce276);
+        
+    
+            marker_184f143971905411728158af54b6354a.bindTooltip(
+                `<div>
+                     <strong>Estacao N2</strong><br>Data: 01/04/2025<br>Poluente A: 3.11
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_55c831ed4bd863bb2640d8d4e4e284b1 = L.marker(
+                [-20.865337997562424, -42.22900260348332],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_65a2f7df86fdd620cc31e3b4fac54b28 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 8.02\" style=\"background-color: #9400D3; width: 12px; height: 9.266692396758009px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_55c831ed4bd863bb2640d8d4e4e284b1.setIcon(div_icon_65a2f7df86fdd620cc31e3b4fac54b28);
+        
+    
+            marker_55c831ed4bd863bb2640d8d4e4e284b1.bindTooltip(
+                `<div>
+                     <strong>Estacao O2</strong><br>Data: 31/05/2025<br>Poluente A: 8.02
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_13d557114fc3de038f33b3ff0771eac0 = L.marker(
+                [-22.05986209894457, -43.23839266400478],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_a6c0ee1621e05b8d5f6bf1da27835368 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 6.36\" style=\"background-color: #9400D3; width: 12px; height: 8.305673485140872px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_13d557114fc3de038f33b3ff0771eac0.setIcon(div_icon_a6c0ee1621e05b8d5f6bf1da27835368);
+        
+    
+            marker_13d557114fc3de038f33b3ff0771eac0.bindTooltip(
+                `<div>
+                     <strong>Estacao P2</strong><br>Data: 02/03/2025<br>Poluente A: 6.36
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_6916bc2e80633c2c3d92d1d8707c7425 = L.marker(
+                [-21.675736451374345, -42.59006703513315],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_c2769723f66987870fe8c48cf87af431 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 4.86\" style=\"background-color: #9400D3; width: 12px; height: 7.437282902354303px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_6916bc2e80633c2c3d92d1d8707c7425.setIcon(div_icon_c2769723f66987870fe8c48cf87af431);
+        
+    
+            marker_6916bc2e80633c2c3d92d1d8707c7425.bindTooltip(
+                `<div>
+                     <strong>Estacao Q2</strong><br>Data: 31/05/2025<br>Poluente A: 4.86
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_1e590398810e5ed949350e24e52e4f8b = L.marker(
+                [-21.193246776053808, -44.3012920664444],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_1c4803517b4bd7a1688920494787fe79 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 5.60\" style=\"background-color: #9400D3; width: 12px; height: 7.865688923195678px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_1e590398810e5ed949350e24e52e4f8b.setIcon(div_icon_1c4803517b4bd7a1688920494787fe79);
+        
+    
+            marker_1e590398810e5ed949350e24e52e4f8b.bindTooltip(
+                `<div>
+                     <strong>Estacao R2</strong><br>Data: 01/04/2025<br>Poluente A: 5.60
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_3542c82579c0f03c102388e0c3958991 = L.marker(
+                [-21.74570168215254, -43.29909853326916],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_687e6b9face743eb7bb6bdcbfad682f1 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 9.74\" style=\"background-color: #9400D3; width: 12px; height: 10.262446931686608px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_3542c82579c0f03c102388e0c3958991.setIcon(div_icon_687e6b9face743eb7bb6bdcbfad682f1);
+        
+    
+            marker_3542c82579c0f03c102388e0c3958991.bindTooltip(
+                `<div>
+                     <strong>Estacao S2</strong><br>Data: 01/04/2025<br>Poluente A: 9.74
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_bcaaa97ab86812a6415e878e7c8739b7 = L.marker(
+                [-22.82845280228104, -42.03462808946665],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_4c91deedb4312e0305a19b6f9317fa6d = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 5.58\" style=\"background-color: #9400D3; width: 12px; height: 7.854110382091856px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_bcaaa97ab86812a6415e878e7c8739b7.setIcon(div_icon_4c91deedb4312e0305a19b6f9317fa6d);
+        
+    
+            marker_bcaaa97ab86812a6415e878e7c8739b7.bindTooltip(
+                `<div>
+                     <strong>Estacao T2</strong><br>Data: 02/03/2025<br>Poluente A: 5.58
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_eed3ad240776b215702f767aaa8e4f3f = L.marker(
+                [-20.817348211312225, -44.11375480510107],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_f5169cc187a399f3039a7c7778b50a2c = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 1.99\" style=\"background-color: #9400D3; width: 12px; height: 5.775762253956001px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_eed3ad240776b215702f767aaa8e4f3f.setIcon(div_icon_f5169cc187a399f3039a7c7778b50a2c);
+        
+    
+            marker_eed3ad240776b215702f767aaa8e4f3f.bindTooltip(
+                `<div>
+                     <strong>Estacao U2</strong><br>Data: 01/04/2025<br>Poluente A: 1.99
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_9e982916b09f877fb09997066328e589 = L.marker(
+                [-23.49221492684906, -41.89509667889324],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_a957429907c0405c76e459730414b71f = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 7.03\" style=\"background-color: #9400D3; width: 12px; height: 8.693554612118874px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_9e982916b09f877fb09997066328e589.setIcon(div_icon_a957429907c0405c76e459730414b71f);
+        
+    
+            marker_9e982916b09f877fb09997066328e589.bindTooltip(
+                `<div>
+                     <strong>Estacao V2</strong><br>Data: 30/06/2025<br>Poluente A: 7.03
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_6c594ec0a8a336ced466c19eba5d44db = L.marker(
+                [-21.25115130397424, -44.40858354179922],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_6d709664f998f00d8910334c538bd4d5 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 5.86\" style=\"background-color: #9400D3; width: 12px; height: 8.01620995754535px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_6c594ec0a8a336ced466c19eba5d44db.setIcon(div_icon_6d709664f998f00d8910334c538bd4d5);
+        
+    
+            marker_6c594ec0a8a336ced466c19eba5d44db.bindTooltip(
+                `<div>
+                     <strong>Estacao W2</strong><br>Data: 01/04/2025<br>Poluente A: 5.86
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_e167522844c4ba9c6a7086b4e144d9d9 = L.marker(
+                [-23.232387013863832, -42.89399330795343],
+                {}
+            ).addTo(feature_group_05f7563c218d50453264c5ff1378a69d);
+        
+    
+            var div_icon_c6e0d3896b0cc14a3fdf133a5e5cefbd = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente A: 5.86\" style=\"background-color: #9400D3; width: 12px; height: 8.01620995754535px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [0, 55], "iconSize": [15, 55]});
+            marker_e167522844c4ba9c6a7086b4e144d9d9.setIcon(div_icon_c6e0d3896b0cc14a3fdf133a5e5cefbd);
+        
+    
+            marker_e167522844c4ba9c6a7086b4e144d9d9.bindTooltip(
+                `<div>
+                     <strong>Estacao X2</strong><br>Data: 31/05/2025<br>Poluente A: 5.86
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            feature_group_05f7563c218d50453264c5ff1378a69d.addTo(map_b374aa8744c5f879269b3549c5af2c4f);
+        
+    
+            var feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67 = L.featureGroup(
+                {}
+            );
+        
+    
+            var marker_adac2095ab043dcc839239341a2b60e4 = L.marker(
+                [-22.776923601921965, -42.450209443523626],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_5c39a7e9e31eb7ac8f3323c376998074 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 4.77\" style=\"background-color: \t#8B008B; width: 12px; height: 6.678170836928386px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_adac2095ab043dcc839239341a2b60e4.setIcon(div_icon_5c39a7e9e31eb7ac8f3323c376998074);
+        
+    
+            marker_adac2095ab043dcc839239341a2b60e4.bindTooltip(
+                `<div>
+                     <strong>Estacao A1</strong><br>Data: 31/05/2025<br>Poluente B: 4.77
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_9853e12f69e04f1d2cfbfce85d14af05 = L.marker(
+                [-22.31454929199456, -41.720023402618615],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_69538e3e10c7775941c1a65c3b51a5d7 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 2.07\" style=\"background-color: \t#8B008B; width: 12px; height: 5.513373597929249px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_9853e12f69e04f1d2cfbfce85d14af05.setIcon(div_icon_69538e3e10c7775941c1a65c3b51a5d7);
+        
+    
+            marker_9853e12f69e04f1d2cfbfce85d14af05.bindTooltip(
+                `<div>
+                     <strong>Estacao B1</strong><br>Data: 30/06/2025<br>Poluente B: 2.07
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_6f31e7f422b079457486411fb5876db1 = L.marker(
+                [-23.453090779776417, -43.22979555788089],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_7e706f6e3f1bde2df2fa517c345ac5de = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 9.19\" style=\"background-color: \t#8B008B; width: 12px; height: 8.584987057808455px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_6f31e7f422b079457486411fb5876db1.setIcon(div_icon_7e706f6e3f1bde2df2fa517c345ac5de);
+        
+    
+            marker_6f31e7f422b079457486411fb5876db1.bindTooltip(
+                `<div>
+                     <strong>Estacao C1</strong><br>Data: 01/05/2025<br>Poluente B: 9.19
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_742d7fc65f3f13769b485b65b474de36 = L.marker(
+                [-20.9498842666306, -43.15164797758539],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_bc25f002874b05918309ddba81dd0e4b = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 0.88\" style=\"background-color: \t#8B008B; width: 12px; height: 5.0px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_742d7fc65f3f13769b485b65b474de36.setIcon(div_icon_bc25f002874b05918309ddba81dd0e4b);
+        
+    
+            marker_742d7fc65f3f13769b485b65b474de36.bindTooltip(
+                `<div>
+                     <strong>Estacao D1</strong><br>Data: 30/06/2025<br>Poluente B: 0.88
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_7a7f8f45fec01933ab3e71b9bb61a758 = L.marker(
+                [-21.36801133094264, -44.1673275375645],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_14ffc97a94d5770084bc4eec24bdf80c = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 8.86\" style=\"background-color: \t#8B008B; width: 12px; height: 8.442622950819672px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_7a7f8f45fec01933ab3e71b9bb61a758.setIcon(div_icon_14ffc97a94d5770084bc4eec24bdf80c);
+        
+    
+            marker_7a7f8f45fec01933ab3e71b9bb61a758.bindTooltip(
+                `<div>
+                     <strong>Estacao E1</strong><br>Data: 30/06/2025<br>Poluente B: 8.86
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_46c9fdcf6682410786f238b1e293b1b1 = L.marker(
+                [-21.62693785559862, -43.61309894248686],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_53cd3dc21422fa7b05c2dbca930cfea1 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 3.88\" style=\"background-color: \t#8B008B; width: 12px; height: 6.294219154443486px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_46c9fdcf6682410786f238b1e293b1b1.setIcon(div_icon_53cd3dc21422fa7b05c2dbca930cfea1);
+        
+    
+            marker_46c9fdcf6682410786f238b1e293b1b1.bindTooltip(
+                `<div>
+                     <strong>Estacao F1</strong><br>Data: 01/04/2025<br>Poluente B: 3.88
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_a00b5fec966964bfa684d15770c2f794 = L.marker(
+                [-20.779514675362737, -43.683603251846094],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_6c47905fea8b0c8ce82cda798813475d = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 2.82\" style=\"background-color: \t#8B008B; width: 12px; height: 5.836928386540121px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_a00b5fec966964bfa684d15770c2f794.setIcon(div_icon_6c47905fea8b0c8ce82cda798813475d);
+        
+    
+            marker_a00b5fec966964bfa684d15770c2f794.bindTooltip(
+                `<div>
+                     <strong>Estacao G1</strong><br>Data: 01/05/2025<br>Poluente B: 2.82
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_369960b9db7cf250b4dadea5d886d7ec = L.marker(
+                [-22.995126873481208, -43.84370734128079],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_ed7c0ac12cb11bbd1fe5e173242e5ddd = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 3.03\" style=\"background-color: \t#8B008B; width: 12px; height: 5.927523727351165px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_369960b9db7cf250b4dadea5d886d7ec.setIcon(div_icon_ed7c0ac12cb11bbd1fe5e173242e5ddd);
+        
+    
+            marker_369960b9db7cf250b4dadea5d886d7ec.bindTooltip(
+                `<div>
+                     <strong>Estacao H1</strong><br>Data: 01/05/2025<br>Poluente B: 3.03
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_2726aef8a381db4b548dc8b8868876da = L.marker(
+                [-20.57015513250204, -43.26688896004531],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_a95fc388c6985fcb11cd677f9f9af37e = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 4.01\" style=\"background-color: \t#8B008B; width: 12px; height: 6.35030198446937px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_2726aef8a381db4b548dc8b8868876da.setIcon(div_icon_a95fc388c6985fcb11cd677f9f9af37e);
+        
+    
+            marker_2726aef8a381db4b548dc8b8868876da.bindTooltip(
+                `<div>
+                     <strong>Estacao I1</strong><br>Data: 01/05/2025<br>Poluente B: 4.01
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_8e867c50076158b38cf778466aca0be0 = L.marker(
+                [-22.77352018516772, -42.09058073086031],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_441b2626fe3f79080df2d77dc619f1d6 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 3.81\" style=\"background-color: \t#8B008B; width: 12px; height: 6.2640207075064716px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_8e867c50076158b38cf778466aca0be0.setIcon(div_icon_441b2626fe3f79080df2d77dc619f1d6);
+        
+    
+            marker_8e867c50076158b38cf778466aca0be0.bindTooltip(
+                `<div>
+                     <strong>Estacao J1</strong><br>Data: 30/06/2025<br>Poluente B: 3.81
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_abaf3f9bd4d8a8f3a5504644cd56071d = L.marker(
+                [-23.211470346725736, -41.67843020653119],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_ae11c62d9dc37d3c1cec03a89c6729af = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 5.41\" style=\"background-color: \t#8B008B; width: 12px; height: 6.954270923209664px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_abaf3f9bd4d8a8f3a5504644cd56071d.setIcon(div_icon_ae11c62d9dc37d3c1cec03a89c6729af);
+        
+    
+            marker_abaf3f9bd4d8a8f3a5504644cd56071d.bindTooltip(
+                `<div>
+                     <strong>Estacao K1</strong><br>Data: 31/05/2025<br>Poluente B: 5.41
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_d2e8cca8db5d4bf24cddca0ae38fc8a2 = L.marker(
+                [-22.717512475508773, -41.51123890072623],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_66b19d707b6584b3fcdc9d0707083baa = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 8.93\" style=\"background-color: \t#8B008B; width: 12px; height: 8.472821397756686px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_d2e8cca8db5d4bf24cddca0ae38fc8a2.setIcon(div_icon_66b19d707b6584b3fcdc9d0707083baa);
+        
+    
+            marker_d2e8cca8db5d4bf24cddca0ae38fc8a2.bindTooltip(
+                `<div>
+                     <strong>Estacao L1</strong><br>Data: 01/05/2025<br>Poluente B: 8.93
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_1177b2830279dd720da861ed52e74b33 = L.marker(
+                [-20.94721465369746, -41.69309501733716],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_24072dc2c5391596fb99742e5f78bf0d = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 105.19\" style=\"background-color: \t#8B008B; width: 12px; height: 50.0px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_1177b2830279dd720da861ed52e74b33.setIcon(div_icon_24072dc2c5391596fb99742e5f78bf0d);
+        
+    
+            marker_1177b2830279dd720da861ed52e74b33.bindTooltip(
+                `<div>
+                     <strong>Estacao M1</strong><br>Data: 30/06/2025<br>Poluente B: 105.19
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_e4128675c0360148b38ca15abce56784 = L.marker(
+                [-22.963531872336013, -43.40059364625142],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_4cd75e395410a2de674ac8714c33cc32 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 6.10\" style=\"background-color: \t#8B008B; width: 12px; height: 7.2519413287316645px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_e4128675c0360148b38ca15abce56784.setIcon(div_icon_4cd75e395410a2de674ac8714c33cc32);
+        
+    
+            marker_e4128675c0360148b38ca15abce56784.bindTooltip(
+                `<div>
+                     <strong>Estacao N1</strong><br>Data: 01/04/2025<br>Poluente B: 6.10
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_bfb74e9d3b44a0f297afea76fcb00740 = L.marker(
+                [-20.563321425174973, -43.03977354112163],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_0d5e6da34199b34fa283f39ac68a6ceb = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 9.95\" style=\"background-color: \t#8B008B; width: 12px; height: 8.91285591026747px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_bfb74e9d3b44a0f297afea76fcb00740.setIcon(div_icon_0d5e6da34199b34fa283f39ac68a6ceb);
+        
+    
+            marker_bfb74e9d3b44a0f297afea76fcb00740.bindTooltip(
+                `<div>
+                     <strong>Estacao O1</strong><br>Data: 31/05/2025<br>Poluente B: 9.95
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_8e49850ca3cf7eaea7edd80c56ab705c = L.marker(
+                [-22.09016645802717, -43.66131897460973],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_ce28ff4a17bb1d1ef9837aaefaa144ba = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 1.22\" style=\"background-color: \t#8B008B; width: 12px; height: 5.146678170836928px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_8e49850ca3cf7eaea7edd80c56ab705c.setIcon(div_icon_ce28ff4a17bb1d1ef9837aaefaa144ba);
+        
+    
+            marker_8e49850ca3cf7eaea7edd80c56ab705c.bindTooltip(
+                `<div>
+                     <strong>Estacao P1</strong><br>Data: 01/04/2025<br>Poluente B: 1.22
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_04420e6627a7907e6085215f83ce4937 = L.marker(
+                [-22.582908942138456, -43.927266906548965],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_3299205703d861356f3e0155ea77876c = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 3.31\" style=\"background-color: \t#8B008B; width: 12px; height: 6.048317515099224px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_04420e6627a7907e6085215f83ce4937.setIcon(div_icon_3299205703d861356f3e0155ea77876c);
+        
+    
+            marker_04420e6627a7907e6085215f83ce4937.bindTooltip(
+                `<div>
+                     <strong>Estacao Q1</strong><br>Data: 31/05/2025<br>Poluente B: 3.31
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_68869e11ac2b665d374aefe580d74fd7 = L.marker(
+                [-22.5323477072842, -41.953990615225976],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_203968b7ecdcc57a72c217232eefcc06 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 0.98\" style=\"background-color: \t#8B008B; width: 12px; height: 5.043140638481449px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_68869e11ac2b665d374aefe580d74fd7.setIcon(div_icon_203968b7ecdcc57a72c217232eefcc06);
+        
+    
+            marker_68869e11ac2b665d374aefe580d74fd7.bindTooltip(
+                `<div>
+                     <strong>Estacao R1</strong><br>Data: 30/06/2025<br>Poluente B: 0.98
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_925470ebb7c9c4b5c0a69f3acac2f336 = L.marker(
+                [-20.84014855314802, -44.41714968437888],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_309e57f52238535056a1de79789b662f = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 9.83\" style=\"background-color: \t#8B008B; width: 12px; height: 8.861087144089732px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_925470ebb7c9c4b5c0a69f3acac2f336.setIcon(div_icon_309e57f52238535056a1de79789b662f);
+        
+    
+            marker_925470ebb7c9c4b5c0a69f3acac2f336.bindTooltip(
+                `<div>
+                     <strong>Estacao S1</strong><br>Data: 02/03/2025<br>Poluente B: 9.83
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_ede9b677b31559d721c3710b1942f6a5 = L.marker(
+                [-20.98319949379191, -41.91878614506497],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_be630876c8a833f96587c4d02863fcb9 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 4.41\" style=\"background-color: \t#8B008B; width: 12px; height: 6.522864538395169px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_ede9b677b31559d721c3710b1942f6a5.setIcon(div_icon_be630876c8a833f96587c4d02863fcb9);
+        
+    
+            marker_ede9b677b31559d721c3710b1942f6a5.bindTooltip(
+                `<div>
+                     <strong>Estacao T1</strong><br>Data: 31/05/2025<br>Poluente B: 4.41
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_a0def5ceac83efb428f2077cfaef23ef = L.marker(
+                [-21.40146336769842, -44.0849407227466],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_b6453a322963d73ea38e8df6db816094 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 2.88\" style=\"background-color: \t#8B008B; width: 12px; height: 5.862812769628991px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_a0def5ceac83efb428f2077cfaef23ef.setIcon(div_icon_b6453a322963d73ea38e8df6db816094);
+        
+    
+            marker_a0def5ceac83efb428f2077cfaef23ef.bindTooltip(
+                `<div>
+                     <strong>Estacao U1</strong><br>Data: 01/04/2025<br>Poluente B: 2.88
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_42d31f6ba742f88a5b5645ac1ae75ba3 = L.marker(
+                [-22.94699897700589, -44.25738110014841],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_5dcc88112afb80727e3871912d719b2f = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 7.44\" style=\"background-color: \t#8B008B; width: 12px; height: 7.8300258843830886px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_42d31f6ba742f88a5b5645ac1ae75ba3.setIcon(div_icon_5dcc88112afb80727e3871912d719b2f);
+        
+    
+            marker_42d31f6ba742f88a5b5645ac1ae75ba3.bindTooltip(
+                `<div>
+                     <strong>Estacao V1</strong><br>Data: 30/06/2025<br>Poluente B: 7.44
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_3b208eb49b72d8650a262225768e4dce = L.marker(
+                [-23.35685161692505, -42.80188836851777],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_8b677563e39a66829c370eb84a8e4fab = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 3.79\" style=\"background-color: \t#8B008B; width: 12px; height: 6.255392579810181px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_3b208eb49b72d8650a262225768e4dce.setIcon(div_icon_8b677563e39a66829c370eb84a8e4fab);
+        
+    
+            marker_3b208eb49b72d8650a262225768e4dce.bindTooltip(
+                `<div>
+                     <strong>Estacao W1</strong><br>Data: 31/05/2025<br>Poluente B: 3.79
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_27d51c9eb9fe3fc9816850cd4b472f47 = L.marker(
+                [-22.105978561181168, -42.550678952071706],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_5cd17004e241a8df50b43bd057c52fa4 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 9.37\" style=\"background-color: \t#8B008B; width: 12px; height: 8.662640207075064px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_27d51c9eb9fe3fc9816850cd4b472f47.setIcon(div_icon_5cd17004e241a8df50b43bd057c52fa4);
+        
+    
+            marker_27d51c9eb9fe3fc9816850cd4b472f47.bindTooltip(
+                `<div>
+                     <strong>Estacao X1</strong><br>Data: 02/03/2025<br>Poluente B: 9.37
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_c2cd083e24893e00e483bdf253c2566b = L.marker(
+                [-21.996880348254223, -42.88186765479981],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_089c3a05a42eecf9b494c08b907b7dbd = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 6.55\" style=\"background-color: \t#8B008B; width: 12px; height: 7.446074201898188px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_c2cd083e24893e00e483bdf253c2566b.setIcon(div_icon_089c3a05a42eecf9b494c08b907b7dbd);
+        
+    
+            marker_c2cd083e24893e00e483bdf253c2566b.bindTooltip(
+                `<div>
+                     <strong>Estacao Y1</strong><br>Data: 02/03/2025<br>Poluente B: 6.55
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_6660a13c55b896f1532b2c4f2e1fbe12 = L.marker(
+                [-21.0971521159528, -42.468494972851055],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_6a0af5912e832dcefa77660e2e1b06ca = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 2.54\" style=\"background-color: \t#8B008B; width: 12px; height: 5.716134598792062px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_6660a13c55b896f1532b2c4f2e1fbe12.setIcon(div_icon_6a0af5912e832dcefa77660e2e1b06ca);
+        
+    
+            marker_6660a13c55b896f1532b2c4f2e1fbe12.bindTooltip(
+                `<div>
+                     <strong>Estacao Z1</strong><br>Data: 01/05/2025<br>Poluente B: 2.54
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_f3d4697efaec40118b04320731ffb9e0 = L.marker(
+                [-22.36822275031607, -44.3831106030693],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_e6cbe116ef1e0f58b3a4d04905efff2e = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 3.81\" style=\"background-color: \t#8B008B; width: 12px; height: 6.2640207075064716px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_f3d4697efaec40118b04320731ffb9e0.setIcon(div_icon_e6cbe116ef1e0f58b3a4d04905efff2e);
+        
+    
+            marker_f3d4697efaec40118b04320731ffb9e0.bindTooltip(
+                `<div>
+                     <strong>Estacao A2</strong><br>Data: 01/05/2025<br>Poluente B: 3.81
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_31ec550be9b96711e47a4bcfc32d0d15 = L.marker(
+                [-20.69005554443288, -44.38244101997306],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_d9015c1e0d0d88ac106eb6b612349823 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 1.71\" style=\"background-color: \t#8B008B; width: 12px; height: 5.358067299396031px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_31ec550be9b96711e47a4bcfc32d0d15.setIcon(div_icon_d9015c1e0d0d88ac106eb6b612349823);
+        
+    
+            marker_31ec550be9b96711e47a4bcfc32d0d15.bindTooltip(
+                `<div>
+                     <strong>Estacao B2</strong><br>Data: 01/04/2025<br>Poluente B: 1.71
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_17de6432c550f5c0efca56d7e4c444b4 = L.marker(
+                [-22.74995065235169, -42.75836796296827],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_0517a5ea756c1de8ace9df31d81b379f = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 1.45\" style=\"background-color: \t#8B008B; width: 12px; height: 5.245901639344262px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_17de6432c550f5c0efca56d7e4c444b4.setIcon(div_icon_0517a5ea756c1de8ace9df31d81b379f);
+        
+    
+            marker_17de6432c550f5c0efca56d7e4c444b4.bindTooltip(
+                `<div>
+                     <strong>Estacao C2</strong><br>Data: 31/05/2025<br>Poluente B: 1.45
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_0c84a7d92c28aa1e54d5d66d017c42fc = L.marker(
+                [-23.33954410975789, -41.62437550935041],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_a8af4123c1a3956e4ff82673745e2230 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 9.49\" style=\"background-color: \t#8B008B; width: 12px; height: 8.714408973252805px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_0c84a7d92c28aa1e54d5d66d017c42fc.setIcon(div_icon_a8af4123c1a3956e4ff82673745e2230);
+        
+    
+            marker_0c84a7d92c28aa1e54d5d66d017c42fc.bindTooltip(
+                `<div>
+                     <strong>Estacao D2</strong><br>Data: 31/05/2025<br>Poluente B: 9.49
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_c2ed1d817e9bd885ad3bccf3f6ece703 = L.marker(
+                [-21.15611184858639, -44.15960619394765],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_96c30eb28e48886de380a31b5f666908 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 8.45\" style=\"background-color: \t#8B008B; width: 12px; height: 8.26574633304573px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_c2ed1d817e9bd885ad3bccf3f6ece703.setIcon(div_icon_96c30eb28e48886de380a31b5f666908);
+        
+    
+            marker_c2ed1d817e9bd885ad3bccf3f6ece703.bindTooltip(
+                `<div>
+                     <strong>Estacao E2</strong><br>Data: 01/05/2025<br>Poluente B: 8.45
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_796c79cd92d7bafd679857b4ed0e2612 = L.marker(
+                [-20.899393884067475, -41.984557708708046],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_78d94b415f2c532e2de4f1507750c053 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 9.12\" style=\"background-color: \t#8B008B; width: 12px; height: 8.55478861087144px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_796c79cd92d7bafd679857b4ed0e2612.setIcon(div_icon_78d94b415f2c532e2de4f1507750c053);
+        
+    
+            marker_796c79cd92d7bafd679857b4ed0e2612.bindTooltip(
+                `<div>
+                     <strong>Estacao F2</strong><br>Data: 31/05/2025<br>Poluente B: 9.12
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_9d94f21d66cd637230a584f79c6417a2 = L.marker(
+                [-21.724333783536142, -43.44934525989906],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_3a8ce9c673cf9acd0126806cba2d003a = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 7.79\" style=\"background-color: \t#8B008B; width: 12px; height: 7.981018119068162px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_9d94f21d66cd637230a584f79c6417a2.setIcon(div_icon_3a8ce9c673cf9acd0126806cba2d003a);
+        
+    
+            marker_9d94f21d66cd637230a584f79c6417a2.bindTooltip(
+                `<div>
+                     <strong>Estacao G2</strong><br>Data: 31/05/2025<br>Poluente B: 7.79
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_407d04eb8f5095c9853fd571247363aa = L.marker(
+                [-21.03162894436992, -42.26736502917011],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_1eb780280398f1873a32b7f60f3bc5b0 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 5.52\" style=\"background-color: \t#8B008B; width: 12px; height: 7.001725625539258px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_407d04eb8f5095c9853fd571247363aa.setIcon(div_icon_1eb780280398f1873a32b7f60f3bc5b0);
+        
+    
+            marker_407d04eb8f5095c9853fd571247363aa.bindTooltip(
+                `<div>
+                     <strong>Estacao H2</strong><br>Data: 02/03/2025<br>Poluente B: 5.52
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_45f651c2478581b49d2579aa87f64e33 = L.marker(
+                [-22.190992505180333, -42.0936722529198],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_ab0fc52943d9a604baab308a3f04e226 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 2.08\" style=\"background-color: \t#8B008B; width: 12px; height: 5.517687661777394px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_45f651c2478581b49d2579aa87f64e33.setIcon(div_icon_ab0fc52943d9a604baab308a3f04e226);
+        
+    
+            marker_45f651c2478581b49d2579aa87f64e33.bindTooltip(
+                `<div>
+                     <strong>Estacao I2</strong><br>Data: 01/05/2025<br>Poluente B: 2.08
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_cccc83466e7f93b92666e0503ccdf010 = L.marker(
+                [-22.849572680240527, -43.61651815948171],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_fa0dd0d715a4f508e2f2335525ad70fc = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 2.68\" style=\"background-color: \t#8B008B; width: 12px; height: 5.776531492666091px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_cccc83466e7f93b92666e0503ccdf010.setIcon(div_icon_fa0dd0d715a4f508e2f2335525ad70fc);
+        
+    
+            marker_cccc83466e7f93b92666e0503ccdf010.bindTooltip(
+                `<div>
+                     <strong>Estacao J2</strong><br>Data: 30/06/2025<br>Poluente B: 2.68
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_0671192ce3560a3586d340324f18bff0 = L.marker(
+                [-22.702186225107283, -43.4189647143842],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_8be3e7586c56803000f6ed5217355a2b = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 9.44\" style=\"background-color: \t#8B008B; width: 12px; height: 8.692838654012078px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_0671192ce3560a3586d340324f18bff0.setIcon(div_icon_8be3e7586c56803000f6ed5217355a2b);
+        
+    
+            marker_0671192ce3560a3586d340324f18bff0.bindTooltip(
+                `<div>
+                     <strong>Estacao K2</strong><br>Data: 01/05/2025<br>Poluente B: 9.44
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_51bc7ee2c627f0fd827cf7f0e431c488 = L.marker(
+                [-22.250082826784563, -42.75651213645752],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_8d150bbea11d0bb6e0d81ed381038280 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 5.91\" style=\"background-color: \t#8B008B; width: 12px; height: 7.1699741156169114px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_51bc7ee2c627f0fd827cf7f0e431c488.setIcon(div_icon_8d150bbea11d0bb6e0d81ed381038280);
+        
+    
+            marker_51bc7ee2c627f0fd827cf7f0e431c488.bindTooltip(
+                `<div>
+                     <strong>Estacao L2</strong><br>Data: 30/06/2025<br>Poluente B: 5.91
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_ec88dc99b41a1b973e3cb091d0214c3a = L.marker(
+                [-23.30946451123, -44.38953439709203],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_266bc840f7891495591818c41b46eb6e = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 7.62\" style=\"background-color: \t#8B008B; width: 12px; height: 7.907679033649698px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_ec88dc99b41a1b973e3cb091d0214c3a.setIcon(div_icon_266bc840f7891495591818c41b46eb6e);
+        
+    
+            marker_ec88dc99b41a1b973e3cb091d0214c3a.bindTooltip(
+                `<div>
+                     <strong>Estacao M2</strong><br>Data: 02/03/2025<br>Poluente B: 7.62
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_e788d51dd8b5bd94d2587548a3304628 = L.marker(
+                [-20.76050274322707, -42.74455140302359],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_6a2811af45e6d626a021be49aee5f8c4 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 2.47\" style=\"background-color: \t#8B008B; width: 12px; height: 5.6859361518550475px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_e788d51dd8b5bd94d2587548a3304628.setIcon(div_icon_6a2811af45e6d626a021be49aee5f8c4);
+        
+    
+            marker_e788d51dd8b5bd94d2587548a3304628.bindTooltip(
+                `<div>
+                     <strong>Estacao N2</strong><br>Data: 01/04/2025<br>Poluente B: 2.47
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_a04dae24708bd7d70afff48ac4bca9d9 = L.marker(
+                [-20.865337997562424, -42.22900260348332],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_78f0c86a42c11779425236316ffe62b8 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 6.10\" style=\"background-color: \t#8B008B; width: 12px; height: 7.2519413287316645px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_a04dae24708bd7d70afff48ac4bca9d9.setIcon(div_icon_78f0c86a42c11779425236316ffe62b8);
+        
+    
+            marker_a04dae24708bd7d70afff48ac4bca9d9.bindTooltip(
+                `<div>
+                     <strong>Estacao O2</strong><br>Data: 31/05/2025<br>Poluente B: 6.10
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_633c4cbe79900f40a88de2dad42c0378 = L.marker(
+                [-22.05986209894457, -43.23839266400478],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_b36384460efa013c1e530c32c4119fc9 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 9.81\" style=\"background-color: \t#8B008B; width: 12px; height: 8.852459016393443px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_633c4cbe79900f40a88de2dad42c0378.setIcon(div_icon_b36384460efa013c1e530c32c4119fc9);
+        
+    
+            marker_633c4cbe79900f40a88de2dad42c0378.bindTooltip(
+                `<div>
+                     <strong>Estacao P2</strong><br>Data: 02/03/2025<br>Poluente B: 9.81
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_c900cbf59b75e830e6ecbc0ceda62205 = L.marker(
+                [-21.675736451374345, -42.59006703513315],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_92c7254a050a299e82f2f179dea6a505 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 8.50\" style=\"background-color: \t#8B008B; width: 12px; height: 8.287316652286453px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_c900cbf59b75e830e6ecbc0ceda62205.setIcon(div_icon_92c7254a050a299e82f2f179dea6a505);
+        
+    
+            marker_c900cbf59b75e830e6ecbc0ceda62205.bindTooltip(
+                `<div>
+                     <strong>Estacao Q2</strong><br>Data: 31/05/2025<br>Poluente B: 8.50
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_5cc5a4ea85c5b2521662b02a00d7722d = L.marker(
+                [-21.193246776053808, -44.3012920664444],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_79850fdca016f05e1ecb4103a44a6860 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 4.87\" style=\"background-color: \t#8B008B; width: 12px; height: 6.721311475409836px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_5cc5a4ea85c5b2521662b02a00d7722d.setIcon(div_icon_79850fdca016f05e1ecb4103a44a6860);
+        
+    
+            marker_5cc5a4ea85c5b2521662b02a00d7722d.bindTooltip(
+                `<div>
+                     <strong>Estacao R2</strong><br>Data: 01/04/2025<br>Poluente B: 4.87
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_8f2eab0149dbbf976f3db7ecaa2d7a69 = L.marker(
+                [-21.74570168215254, -43.29909853326916],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_b9d55360aded3d11526c0c8b244a6568 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 6.22\" style=\"background-color: \t#8B008B; width: 12px; height: 7.3037100949094045px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_8f2eab0149dbbf976f3db7ecaa2d7a69.setIcon(div_icon_b9d55360aded3d11526c0c8b244a6568);
+        
+    
+            marker_8f2eab0149dbbf976f3db7ecaa2d7a69.bindTooltip(
+                `<div>
+                     <strong>Estacao S2</strong><br>Data: 01/04/2025<br>Poluente B: 6.22
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_c79ad92b3be1294719cbdb4a6db40e92 = L.marker(
+                [-22.82845280228104, -42.03462808946665],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_f5860a5a9e86401a42f00c4052f191e9 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 3.88\" style=\"background-color: \t#8B008B; width: 12px; height: 6.294219154443486px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_c79ad92b3be1294719cbdb4a6db40e92.setIcon(div_icon_f5860a5a9e86401a42f00c4052f191e9);
+        
+    
+            marker_c79ad92b3be1294719cbdb4a6db40e92.bindTooltip(
+                `<div>
+                     <strong>Estacao T2</strong><br>Data: 02/03/2025<br>Poluente B: 3.88
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_b8aabf9015645438bbe6551b3f188e25 = L.marker(
+                [-20.817348211312225, -44.11375480510107],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_9b3bcfebf7673eb26eed7340ede62025 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 4.08\" style=\"background-color: \t#8B008B; width: 12px; height: 6.380500431406385px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_b8aabf9015645438bbe6551b3f188e25.setIcon(div_icon_9b3bcfebf7673eb26eed7340ede62025);
+        
+    
+            marker_b8aabf9015645438bbe6551b3f188e25.bindTooltip(
+                `<div>
+                     <strong>Estacao U2</strong><br>Data: 01/04/2025<br>Poluente B: 4.08
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_ac6058748e2432e899c50b7efca8ca25 = L.marker(
+                [-23.49221492684906, -41.89509667889324],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_619760980b61dd346d7ef65b7d1e037e = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 38.52\" style=\"background-color: \t#8B008B; width: 12px; height: 21.2381363244176px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_ac6058748e2432e899c50b7efca8ca25.setIcon(div_icon_619760980b61dd346d7ef65b7d1e037e);
+        
+    
+            marker_ac6058748e2432e899c50b7efca8ca25.bindTooltip(
+                `<div>
+                     <strong>Estacao V2</strong><br>Data: 30/06/2025<br>Poluente B: 38.52
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_cc4d55441eca567872b7d693a4474b62 = L.marker(
+                [-21.25115130397424, -44.40858354179922],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_e3b474b7efcdabf46a8bfca168436e4b = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 8.49\" style=\"background-color: \t#8B008B; width: 12px; height: 8.28300258843831px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_cc4d55441eca567872b7d693a4474b62.setIcon(div_icon_e3b474b7efcdabf46a8bfca168436e4b);
+        
+    
+            marker_cc4d55441eca567872b7d693a4474b62.bindTooltip(
+                `<div>
+                     <strong>Estacao W2</strong><br>Data: 01/04/2025<br>Poluente B: 8.49
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_b21b5ae36664c7b59c5b4f9feb0ba235 = L.marker(
+                [-23.232387013863832, -42.89399330795343],
+                {}
+            ).addTo(feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67);
+        
+    
+            var div_icon_8621759e18ffab8d15469383fc4abdfa = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;\"\u003e\u003cdiv title=\"Poluente B: 4.10\" style=\"background-color: \t#8B008B; width: 12px; height: 6.389128559102675px; border-radius: 2px;\"\u003e\u003c/div\u003e\u003c/div\u003e", "iconAnchor": [15, 55], "iconSize": [15, 55]});
+            marker_b21b5ae36664c7b59c5b4f9feb0ba235.setIcon(div_icon_8621759e18ffab8d15469383fc4abdfa);
+        
+    
+            marker_b21b5ae36664c7b59c5b4f9feb0ba235.bindTooltip(
+                `<div>
+                     <strong>Estacao X2</strong><br>Data: 31/05/2025<br>Poluente B: 4.10
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67.addTo(map_b374aa8744c5f879269b3549c5af2c4f);
+        
+    
+            var feature_group_ce36682be019991699be07129c8d6664 = L.featureGroup(
+                {}
+            );
+        
+    
+            var heat_map_c95e496769d31ed86b8100bfef2aefab = L.heatLayer(
+                [[-22.717512475508773, -41.51123890072623, 3.15], [-22.995126873481208, -43.84370734128079, 9.98], [-22.31454929199456, -41.720023402618615, 7.6], [-20.94721465369746, -41.69309501733716, 5.11], [-21.0971521159528, -42.468494972851055, 6.45], [-20.84014855314802, -44.41714968437888, 6.88], [-23.30946451123, -44.38953439709203, 1.22], [-21.193246776053808, -44.3012920664444, 6.01], [-23.35685161692505, -42.80188836851777, 1.39], [-20.865337997562424, -42.22900260348332, 0.95], [-20.563321425174973, -43.03977354112163, 5.93], [-21.62693785559862, -43.61309894248686, 2.58], [-21.25115130397424, -44.40858354179922, 4.27], [-22.717512475508773, -41.51123890072623, 4.34], [-20.57015513250204, -43.26688896004531, 0.81], [-20.98319949379191, -41.91878614506497, 3.6], [-22.31454929199456, -41.720023402618615, 7.41], [-21.36801133094264, -44.1673275375645, 9.46], [-22.5323477072842, -41.953990615225976, 2.35], [-22.77352018516772, -42.09058073086031, 8.65], [-20.9498842666306, -43.15164797758539, 2.93], [-21.03162894436992, -42.26736502917011, 6.97], [-23.30946451123, -44.38953439709203, 1.77], [-21.03162894436992, -42.26736502917011, 1.29], [-20.899393884067475, -41.984557708708046, 1.89], [-23.453090779776417, -43.22979555788089, 7.26], [-21.996880348254223, -42.88186765479981, 7.0], [-21.193246776053808, -44.3012920664444, 0.94], [-22.82845280228104, -42.03462808946665, 5.58], [-22.36822275031607, -44.3831106030693, 2.98], [-20.9498842666306, -43.15164797758539, 6.85], [-22.74995065235169, -42.75836796296827, 4.09], [-22.717512475508773, -41.51123890072623, 8.54], [-22.250082826784563, -42.75651213645752, 2.07], [-22.31454929199456, -41.720023402618615, 6.07], [-20.98319949379191, -41.91878614506497, 3.08], [-23.211470346725736, -41.67843020653119, 7.48], [-22.94699897700589, -44.25738110014841, 1.39], [-22.582908942138456, -43.927266906548965, 8.52], [-21.36801133094264, -44.1673275375645, 4.67], [-20.94721465369746, -41.69309501733716, 0.67], [-20.9498842666306, -43.15164797758539, 1.41], [-20.69005554443288, -44.38244101997306, 7.45], [-20.817348211312225, -44.11375480510107, 1.99], [-22.849572680240527, -43.61651815948171, 1.51], [-21.724333783536142, -43.44934525989906, 4.35], [-23.232387013863832, -42.89399330795343, 5.8], [-22.190992505180333, -42.0936722529198, 1.22], [-22.190992505180333, -42.0936722529198, 2.9], [-22.582908942138456, -43.927266906548965, 3.05], [-21.15611184858639, -44.15960619394765, 7.04], [-23.453090779776417, -43.22979555788089, 6.26], [-20.76050274322707, -42.74455140302359, 3.11], [-22.36822275031607, -44.3831106030693, 6.73], [-21.40146336769842, -44.0849407227466, 7.57], [-22.963531872336013, -43.40059364625142, 3.43], [-22.190992505180333, -42.0936722529198, 9.79], [-20.779514675362737, -43.683603251846094, 2.06], [-21.0971521159528, -42.468494972851055, 3.1], [-22.82845280228104, -42.03462808946665, 0.8], [-21.193246776053808, -44.3012920664444, 3.8], [-21.25115130397424, -44.40858354179922, 7.51], [-20.563321425174973, -43.03977354112163, 6.85], [-21.675736451374345, -42.59006703513315, 7.13], [-20.98319949379191, -41.91878614506497, 2.35], [-23.49221492684906, -41.89509667889324, 7.72], [-22.5323477072842, -41.953990615225976, 5.75], [-21.15611184858639, -44.15960619394765, 7.21], [-22.09016645802717, -43.66131897460973, 8.89], [-23.49221492684906, -41.89509667889324, 7.34], [-20.69005554443288, -44.38244101997306, 5.9], [-21.25115130397424, -44.40858354179922, 5.86], [-21.724333783536142, -43.44934525989906, 4.63], [-22.963531872336013, -43.40059364625142, 2.88], [-22.36822275031607, -44.3831106030693, 6.37], [-20.94721465369746, -41.69309501733716, 7.96], [-22.776923601921965, -42.450209443523626, 2.23], [-22.94699897700589, -44.25738110014841, 1.05], [-20.899393884067475, -41.984557708708046, 4.27], [-21.15611184858639, -44.15960619394765, 9.96], [-22.702186225107283, -43.4189647143842, 4.41], [-22.5323477072842, -41.953990615225976, 1.8], [-21.25115130397424, -44.40858354179922, 8.74], [-22.702186225107283, -43.4189647143842, 2.97], [-21.36801133094264, -44.1673275375645, 5.63], [-22.702186225107283, -43.4189647143842, 0.81], [-23.232387013863832, -42.89399330795343, 6.66], [-21.193246776053808, -44.3012920664444, 5.6], [-22.250082826784563, -42.75651213645752, 78.38], [-22.776923601921965, -42.450209443523626, 8.5], [-22.77352018516772, -42.09058073086031, 2.59], [-21.0971521159528, -42.468494972851055, 8.21], [-23.33954410975789, -41.62437550935041, 1.29], [-23.35685161692505, -42.80188836851777, 9.81], [-22.717512475508773, -41.51123890072623, 8.89], [-22.36822275031607, -44.3831106030693, 6.98], [-20.563321425174973, -43.03977354112163, 0.91], [-21.675736451374345, -42.59006703513315, 4.78], [-23.33954410975789, -41.62437550935041, 8.55], [-21.36801133094264, -44.1673275375645, 7.1], [-22.31454929199456, -41.720023402618615, 3.31], [-21.62693785559862, -43.61309894248686, 1.66], [-21.36801133094264, -44.1673275375645, 1.82], [-22.995126873481208, -43.84370734128079, 1.12], [-22.94699897700589, -44.25738110014841, 9.38], [-21.40146336769842, -44.0849407227466, 7.29], [-20.9498842666306, -43.15164797758539, 9.73], [-22.190992505180333, -42.0936722529198, 3.57], [-22.582908942138456, -43.927266906548965, 1.17], [-21.724333783536142, -43.44934525989906, 7.54], [-21.40146336769842, -44.0849407227466, 4.29], [-22.77352018516772, -42.09058073086031, 4.97], [-21.40146336769842, -44.0849407227466, 1.76], [-23.35685161692505, -42.80188836851777, 3.75], [-22.582908942138456, -43.927266906548965, 2.91], [-22.74995065235169, -42.75836796296827, 2.77], [-20.76050274322707, -42.74455140302359, 7.4], [-22.963531872336013, -43.40059364625142, 7.57], [-22.995126873481208, -43.84370734128079, 5.8], [-23.35685161692505, -42.80188836851777, 0.66], [-23.33954410975789, -41.62437550935041, 6.22], [-22.963531872336013, -43.40059364625142, 5.33], [-22.74995065235169, -42.75836796296827, 3.33], [-21.36801133094264, -44.1673275375645, 9.01], [-23.232387013863832, -42.89399330795343, 2.72], [-21.724333783536142, -43.44934525989906, 7.23], [-22.94699897700589, -44.25738110014841, 4.7], [-22.702186225107283, -43.4189647143842, 1.22], [-22.36822275031607, -44.3831106030693, 7.08], [-22.776923601921965, -42.450209443523626, 6.29], [-20.76050274322707, -42.74455140302359, 4.09], [-22.5323477072842, -41.953990615225976, 0.55], [-21.74570168215254, -43.29909853326916, 8.81], [-22.190992505180333, -42.0936722529198, 9.28], [-22.5323477072842, -41.953990615225976, 4.49], [-20.779514675362737, -43.683603251846094, 6.65], [-23.211470346725736, -41.67843020653119, 5.64], [-20.899393884067475, -41.984557708708046, 8.7], [-20.69005554443288, -44.38244101997306, 5.71], [-22.31454929199456, -41.720023402618615, 6.27], [-23.232387013863832, -42.89399330795343, 6.05], [-21.675736451374345, -42.59006703513315, 5.77], [-21.36801133094264, -44.1673275375645, 5.85], [-21.724333783536142, -43.44934525989906, 4.09], [-22.776923601921965, -42.450209443523626, 5.89], [-22.94699897700589, -44.25738110014841, 4.64], [-21.62693785559862, -43.61309894248686, 1.5], [-23.49221492684906, -41.89509667889324, 9.87], [-22.849572680240527, -43.61651815948171, 9.96], [-21.0971521159528, -42.468494972851055, 6.69], [-23.211470346725736, -41.67843020653119, 2.67], [-21.0971521159528, -42.468494972851055, 5.95], [-23.35685161692505, -42.80188836851777, 8.17], [-20.817348211312225, -44.11375480510107, 3.64], [-22.250082826784563, -42.75651213645752, 9.23], [-20.94721465369746, -41.69309501733716, 6.02], [-22.250082826784563, -42.75651213645752, 7.89], [-22.717512475508773, -41.51123890072623, 9.67], [-22.995126873481208, -43.84370734128079, 7.27], [-21.675736451374345, -42.59006703513315, 7.4], [-23.33954410975789, -41.62437550935041, 9.59], [-20.779514675362737, -43.683603251846094, 3.06], [-23.35685161692505, -42.80188836851777, 2.01], [-22.74995065235169, -42.75836796296827, 5.22], [-20.9498842666306, -43.15164797758539, 7.36], [-22.702186225107283, -43.4189647143842, 3.07], [-22.849572680240527, -43.61651815948171, 4.19], [-20.563321425174973, -43.03977354112163, 3.83], [-20.779514675362737, -43.683603251846094, 5.11], [-21.675736451374345, -42.59006703513315, 3.33], [-20.57015513250204, -43.26688896004531, 6.53], [-22.582908942138456, -43.927266906548965, 6.88], [-22.250082826784563, -42.75651213645752, 8.83], [-21.15611184858639, -44.15960619394765, 9.34], [-22.995126873481208, -43.84370734128079, 2.85], [-20.69005554443288, -44.38244101997306, 4.47], [-21.03162894436992, -42.26736502917011, 4.3], [-22.776923601921965, -42.450209443523626, 4.54], [-20.84014855314802, -44.41714968437888, 1.97], [-22.77352018516772, -42.09058073086031, 8.08], [-21.996880348254223, -42.88186765479981, 9.47], [-20.817348211312225, -44.11375480510107, 1.38], [-23.49221492684906, -41.89509667889324, 7.03], [-23.49221492684906, -41.89509667889324, 9.28], [-20.57015513250204, -43.26688896004531, 5.75], [-21.15611184858639, -44.15960619394765, 7.5], [-20.563321425174973, -43.03977354112163, 9.11], [-21.62693785559862, -43.61309894248686, 8.89], [-20.865337997562424, -42.22900260348332, 3.42], [-22.31454929199456, -41.720023402618615, 5.92], [-20.899393884067475, -41.984557708708046, 2.75], [-22.05986209894457, -43.23839266400478, 6.36], [-20.98319949379191, -41.91878614506497, 4.84], [-22.582908942138456, -43.927266906548965, 4.04], [-20.563321425174973, -43.03977354112163, 2.69], [-21.74570168215254, -43.29909853326916, 9.74], [-20.817348211312225, -44.11375480510107, 7.03], [-22.09016645802717, -43.66131897460973, 9.81], [-22.31454929199456, -41.720023402618615, 9.63], [-23.453090779776417, -43.22979555788089, 4.25], [-23.211470346725736, -41.67843020653119, 8.46], [-21.675736451374345, -42.59006703513315, 4.86], [-22.105978561181168, -42.550678952071706, 0.65], [-23.453090779776417, -43.22979555788089, 6.69], [-20.899393884067475, -41.984557708708046, 4.55], [-20.94721465369746, -41.69309501733716, 3.2], [-21.74570168215254, -43.29909853326916, 7.13], [-21.996880348254223, -42.88186765479981, 8.74], [-20.865337997562424, -42.22900260348332, 0.71], [-23.49221492684906, -41.89509667889324, 1.3], [-23.211470346725736, -41.67843020653119, 9.83], [-22.77352018516772, -42.09058073086031, 5.33], [-20.98319949379191, -41.91878614506497, 3.38], [-20.57015513250204, -43.26688896004531, 1.27], [-20.865337997562424, -42.22900260348332, 9.7], [-21.724333783536142, -43.44934525989906, 2.86], [-20.865337997562424, -42.22900260348332, 8.02], [-22.849572680240527, -43.61651815948171, 1.05], [-23.453090779776417, -43.22979555788089, 0.63], [-23.30946451123, -44.38953439709203, 5.58], [-21.74570168215254, -43.29909853326916, 7.12], [-22.05986209894457, -43.23839266400478, 8.15], [-20.899393884067475, -41.984557708708046, 2.72], [-23.211470346725736, -41.67843020653119, 4.28], [-22.05986209894457, -43.23839266400478, 7.95], [-20.57015513250204, -43.26688896004531, 5.54], [-22.09016645802717, -43.66131897460973, 5.75], [-20.9498842666306, -43.15164797758539, 5.83], [-22.77352018516772, -42.09058073086031, 8.19], [-22.250082826784563, -42.75651213645752, 7.62], [-23.33954410975789, -41.62437550935041, 2.52], [-23.232387013863832, -42.89399330795343, 5.0], [-22.849572680240527, -43.61651815948171, 4.15], [-22.849572680240527, -43.61651815948171, 2.11], [-22.105978561181168, -42.550678952071706, 0.96], [-20.779514675362737, -43.683603251846094, 3.85], [-23.33954410975789, -41.62437550935041, 5.08], [-22.82845280228104, -42.03462808946665, 3.78], [-23.49221492684906, -41.89509667889324, 1.9], [-22.776923601921965, -42.450209443523626, 2.15], [-22.77352018516772, -42.09058073086031, 4.29], [-22.74995065235169, -42.75836796296827, 8.74], [-22.105978561181168, -42.550678952071706, 8.92], [-22.74995065235169, -42.75836796296827, 7.53], [-20.84014855314802, -44.41714968437888, 6.0], [-22.5323477072842, -41.953990615225976, 6.31], [-22.94699897700589, -44.25738110014841, 4.57], [-22.09016645802717, -43.66131897460973, 9.55], [-22.250082826784563, -42.75651213645752, 9.86], [-20.94721465369746, -41.69309501733716, 9.95], [-20.865337997562424, -42.22900260348332, 5.02], [-20.76050274322707, -42.74455140302359, 2.45], [-22.94699897700589, -44.25738110014841, 5.41], [-23.232387013863832, -42.89399330795343, 5.86], [-20.9498842666306, -43.15164797758539, 6.12], [-22.849572680240527, -43.61651815948171, 9.19], [-20.94721465369746, -41.69309501733716, 9.43], [-20.98319949379191, -41.91878614506497, 2.88], [-22.5323477072842, -41.953990615225976, 4.27]],
+                {"blur": 15, "gradient": {"0.2": "blue", "0.4": "lime", "0.6": "yellow", "1": "red"}, "maxZoom": 18, "minOpacity": 0.5, "radius": 25}
+            );
+        
+    
+            heat_map_c95e496769d31ed86b8100bfef2aefab.addTo(feature_group_ce36682be019991699be07129c8d6664);
+        
+    
+            feature_group_ce36682be019991699be07129c8d6664.addTo(map_b374aa8744c5f879269b3549c5af2c4f);
+        
+    
+            var feature_group_f27064b7411a05bc74ddecafd9458ced = L.featureGroup(
+                {}
+            );
+        
+    
+            var heat_map_3939fa2c7f6fa465552a175d74d793a6 = L.heatLayer(
+                [[-22.717512475508773, -41.51123890072623, 7.15], [-22.995126873481208, -43.84370734128079, 3.03], [-22.31454929199456, -41.720023402618615, 5.63], [-20.94721465369746, -41.69309501733716, 104.76], [-21.0971521159528, -42.468494972851055, 8.29], [-20.84014855314802, -44.41714968437888, 3.62], [-23.30946451123, -44.38953439709203, 7.07], [-21.193246776053808, -44.3012920664444, 3.74], [-23.35685161692505, -42.80188836851777, 3.46], [-20.865337997562424, -42.22900260348332, 3.05], [-20.563321425174973, -43.03977354112163, 7.8], [-21.62693785559862, -43.61309894248686, 4.46], [-21.25115130397424, -44.40858354179922, 1.5], [-22.717512475508773, -41.51123890072623, 8.93], [-20.57015513250204, -43.26688896004531, 3.78], [-20.98319949379191, -41.91878614506497, 8.36], [-22.31454929199456, -41.720023402618615, 3.6], [-21.36801133094264, -44.1673275375645, 6.19], [-22.5323477072842, -41.953990615225976, 1.17], [-22.77352018516772, -42.09058073086031, 3.6], [-20.9498842666306, -43.15164797758539, 0.88], [-21.03162894436992, -42.26736502917011, 2.76], [-23.30946451123, -44.38953439709203, 0.63], [-21.03162894436992, -42.26736502917011, 5.52], [-20.899393884067475, -41.984557708708046, 5.38], [-23.453090779776417, -43.22979555788089, 8.01], [-21.996880348254223, -42.88186765479981, 6.35], [-21.193246776053808, -44.3012920664444, 6.4], [-22.82845280228104, -42.03462808946665, 3.88], [-22.36822275031607, -44.3831106030693, 5.21], [-20.9498842666306, -43.15164797758539, 6.83], [-22.74995065235169, -42.75836796296827, 5.58], [-22.717512475508773, -41.51123890072623, 8.64], [-22.250082826784563, -42.75651213645752, 4.41], [-22.31454929199456, -41.720023402618615, 9.67], [-20.98319949379191, -41.91878614506497, 9.67], [-23.211470346725736, -41.67843020653119, 2.49], [-22.94699897700589, -44.25738110014841, 2.24], [-22.582908942138456, -43.927266906548965, 9.34], [-21.36801133094264, -44.1673275375645, 2.42], [-20.94721465369746, -41.69309501733716, 105.19], [-20.9498842666306, -43.15164797758539, 4.02], [-20.69005554443288, -44.38244101997306, 1.71], [-20.817348211312225, -44.11375480510107, 4.08], [-22.849572680240527, -43.61651815948171, 3.69], [-21.724333783536142, -43.44934525989906, 5.93], [-23.232387013863832, -42.89399330795343, 6.07], [-22.190992505180333, -42.0936722529198, 2.08], [-22.190992505180333, -42.0936722529198, 7.11], [-22.582908942138456, -43.927266906548965, 5.11], [-21.15611184858639, -44.15960619394765, 8.45], [-23.453090779776417, -43.22979555788089, 9.3], [-20.76050274322707, -42.74455140302359, 2.47], [-22.36822275031607, -44.3831106030693, 4.16], [-21.40146336769842, -44.0849407227466, 2.88], [-22.963531872336013, -43.40059364625142, 5.65], [-22.190992505180333, -42.0936722529198, 5.78], [-20.779514675362737, -43.683603251846094, 5.57], [-21.0971521159528, -42.468494972851055, 2.54], [-22.82845280228104, -42.03462808946665, 5.71], [-21.193246776053808, -44.3012920664444, 2.49], [-21.25115130397424, -44.40858354179922, 2.23], [-20.563321425174973, -43.03977354112163, 8.71], [-21.675736451374345, -42.59006703513315, 8.07], [-20.98319949379191, -41.91878614506497, 4.41], [-23.49221492684906, -41.89509667889324, 5.55], [-22.5323477072842, -41.953990615225976, 3.32], [-21.15611184858639, -44.15960619394765, 9.7], [-22.09016645802717, -43.66131897460973, 7.6], [-23.49221492684906, -41.89509667889324, 1.09], [-20.69005554443288, -44.38244101997306, 5.97], [-21.25115130397424, -44.40858354179922, 8.49], [-21.724333783536142, -43.44934525989906, 2.91], [-22.963531872336013, -43.40059364625142, 6.1], [-22.36822275031607, -44.3831106030693, 3.7], [-20.94721465369746, -41.69309501733716, 96.86], [-22.776923601921965, -42.450209443523626, 7.68], [-22.94699897700589, -44.25738110014841, 9.19], [-20.899393884067475, -41.984557708708046, 8.97], [-21.15611184858639, -44.15960619394765, 1.03], [-22.702186225107283, -43.4189647143842, 6.23], [-22.5323477072842, -41.953990615225976, 7.23], [-21.25115130397424, -44.40858354179922, 3.86], [-22.702186225107283, -43.4189647143842, 4.81], [-21.36801133094264, -44.1673275375645, 2.43], [-22.702186225107283, -43.4189647143842, 3.16], [-23.232387013863832, -42.89399330795343, 5.06], [-21.193246776053808, -44.3012920664444, 4.87], [-22.250082826784563, -42.75651213645752, 5.91], [-22.776923601921965, -42.450209443523626, 4.77], [-22.77352018516772, -42.09058073086031, 7.26], [-21.0971521159528, -42.468494972851055, 8.3], [-23.33954410975789, -41.62437550935041, 1.37], [-23.35685161692505, -42.80188836851777, 2.17], [-22.717512475508773, -41.51123890072623, 2.29], [-22.36822275031607, -44.3831106030693, 3.74], [-20.563321425174973, -43.03977354112163, 9.95], [-21.675736451374345, -42.59006703513315, 9.15], [-23.33954410975789, -41.62437550935041, 3.87], [-21.36801133094264, -44.1673275375645, 8.86], [-22.31454929199456, -41.720023402618615, 2.07], [-21.62693785559862, -43.61309894248686, 3.88], [-21.36801133094264, -44.1673275375645, 6.24], [-22.995126873481208, -43.84370734128079, 2.91], [-22.94699897700589, -44.25738110014841, 6.56], [-21.40146336769842, -44.0849407227466, 0.89], [-20.9498842666306, -43.15164797758539, 8.56], [-22.190992505180333, -42.0936722529198, 0.91], [-22.582908942138456, -43.927266906548965, 2.48], [-21.724333783536142, -43.44934525989906, 7.79], [-21.40146336769842, -44.0849407227466, 4.62], [-22.77352018516772, -42.09058073086031, 9.84], [-21.40146336769842, -44.0849407227466, 9.71], [-23.35685161692505, -42.80188836851777, 1.37], [-22.582908942138456, -43.927266906548965, 3.31], [-22.74995065235169, -42.75836796296827, 6.96], [-20.76050274322707, -42.74455140302359, 7.69], [-22.963531872336013, -43.40059364625142, 7.35], [-22.995126873481208, -43.84370734128079, 4.34], [-23.35685161692505, -42.80188836851777, 7.75], [-23.33954410975789, -41.62437550935041, 5.76], [-22.963531872336013, -43.40059364625142, 6.55], [-22.74995065235169, -42.75836796296827, 1.45], [-21.36801133094264, -44.1673275375645, 5.02], [-23.232387013863832, -42.89399330795343, 3.76], [-21.724333783536142, -43.44934525989906, 5.08], [-22.94699897700589, -44.25738110014841, 2.78], [-22.702186225107283, -43.4189647143842, 9.44], [-22.36822275031607, -44.3831106030693, 3.81], [-22.776923601921965, -42.450209443523626, 8.42], [-20.76050274322707, -42.74455140302359, 2.79], [-22.5323477072842, -41.953990615225976, 6.46], [-21.74570168215254, -43.29909853326916, 5.39], [-22.190992505180333, -42.0936722529198, 9.23], [-22.5323477072842, -41.953990615225976, 2.93], [-20.779514675362737, -43.683603251846094, 0.5], [-23.211470346725736, -41.67843020653119, 7.11], [-20.899393884067475, -41.984557708708046, 8.86], [-20.69005554443288, -44.38244101997306, 4.52], [-22.31454929199456, -41.720023402618615, 3.12], [-23.232387013863832, -42.89399330795343, 7.5], [-21.675736451374345, -42.59006703513315, 1.36], [-21.36801133094264, -44.1673275375645, 7.11], [-21.724333783536142, -43.44934525989906, 7.2], [-22.776923601921965, -42.450209443523626, 0.8], [-22.94699897700589, -44.25738110014841, 7.44], [-21.62693785559862, -43.61309894248686, 4.84], [-23.49221492684906, -41.89509667889324, 45.6], [-22.849572680240527, -43.61651815948171, 7.12], [-21.0971521159528, -42.468494972851055, 2.46], [-23.211470346725736, -41.67843020653119, 62.16], [-21.0971521159528, -42.468494972851055, 1.72], [-23.35685161692505, -42.80188836851777, 3.79], [-20.817348211312225, -44.11375480510107, 3.56], [-22.250082826784563, -42.75651213645752, 1.29], [-20.94721465369746, -41.69309501733716, 104.04], [-22.250082826784563, -42.75651213645752, 5.06], [-22.717512475508773, -41.51123890072623, 5.8], [-22.995126873481208, -43.84370734128079, 1.91], [-21.675736451374345, -42.59006703513315, 5.7], [-23.33954410975789, -41.62437550935041, 6.93], [-20.779514675362737, -43.683603251846094, 2.82], [-23.35685161692505, -42.80188836851777, 1.64], [-22.74995065235169, -42.75836796296827, 4.2], [-20.9498842666306, -43.15164797758539, 2.74], [-22.702186225107283, -43.4189647143842, 1.77], [-22.849572680240527, -43.61651815948171, 2.68], [-20.563321425174973, -43.03977354112163, 6.63], [-20.779514675362737, -43.683603251846094, 7.08], [-21.675736451374345, -42.59006703513315, 5.47], [-20.57015513250204, -43.26688896004531, 6.97], [-22.582908942138456, -43.927266906548965, 3.91], [-22.250082826784563, -42.75651213645752, 5.74], [-21.15611184858639, -44.15960619394765, 9.76], [-22.995126873481208, -43.84370734128079, 7.11], [-20.69005554443288, -44.38244101997306, 9.69], [-21.03162894436992, -42.26736502917011, 5.04], [-22.776923601921965, -42.450209443523626, 2.48], [-20.84014855314802, -44.41714968437888, 9.83], [-22.77352018516772, -42.09058073086031, 1.93], [-21.996880348254223, -42.88186765479981, 9.47], [-20.817348211312225, -44.11375480510107, 5.07], [-23.49221492684906, -41.89509667889324, 38.52], [-23.49221492684906, -41.89509667889324, 42.74], [-20.57015513250204, -43.26688896004531, 6.13], [-21.15611184858639, -44.15960619394765, 5.69], [-20.563321425174973, -43.03977354112163, 4.63], [-21.62693785559862, -43.61309894248686, 3.58], [-20.865337997562424, -42.22900260348332, 8.26], [-22.31454929199456, -41.720023402618615, 5.45], [-20.899393884067475, -41.984557708708046, 9.12], [-22.05986209894457, -43.23839266400478, 9.81], [-20.98319949379191, -41.91878614506497, 8.5], [-22.582908942138456, -43.927266906548965, 4.25], [-20.563321425174973, -43.03977354112163, 5.24], [-21.74570168215254, -43.29909853326916, 6.22], [-20.817348211312225, -44.11375480510107, 5.36], [-22.09016645802717, -43.66131897460973, 1.22], [-22.31454929199456, -41.720023402618615, 8.52], [-23.453090779776417, -43.22979555788089, 3.29], [-23.211470346725736, -41.67843020653119, 6.92], [-21.675736451374345, -42.59006703513315, 8.5], [-22.105978561181168, -42.550678952071706, 9.37], [-23.453090779776417, -43.22979555788089, 9.19], [-20.899393884067475, -41.984557708708046, 2.61], [-20.94721465369746, -41.69309501733716, 93.4], [-21.74570168215254, -43.29909853326916, 2.21], [-21.996880348254223, -42.88186765479981, 6.55], [-20.865337997562424, -42.22900260348332, 5.23], [-23.49221492684906, -41.89509667889324, 6.17], [-23.211470346725736, -41.67843020653119, 5.41], [-22.77352018516772, -42.09058073086031, 7.11], [-20.98319949379191, -41.91878614506497, 5.6], [-20.57015513250204, -43.26688896004531, 4.01], [-20.865337997562424, -42.22900260348332, 1.34], [-21.724333783536142, -43.44934525989906, 3.64], [-20.865337997562424, -42.22900260348332, 6.1], [-22.849572680240527, -43.61651815948171, 4.25], [-23.453090779776417, -43.22979555788089, 2.39], [-23.30946451123, -44.38953439709203, 7.62], [-21.74570168215254, -43.29909853326916, 4.41], [-22.05986209894457, -43.23839266400478, 9.08], [-20.899393884067475, -41.984557708708046, 6.02], [-23.211470346725736, -41.67843020653119, 5.42], [-22.05986209894457, -43.23839266400478, 6.57], [-20.57015513250204, -43.26688896004531, 4.75], [-22.09016645802717, -43.66131897460973, 5.94], [-20.9498842666306, -43.15164797758539, 4.14], [-22.77352018516772, -42.09058073086031, 3.81], [-22.250082826784563, -42.75651213645752, 4.23], [-23.33954410975789, -41.62437550935041, 9.49], [-23.232387013863832, -42.89399330795343, 3.87], [-22.849572680240527, -43.61651815948171, 7.5], [-22.849572680240527, -43.61651815948171, 6.65], [-22.105978561181168, -42.550678952071706, 9.52], [-20.779514675362737, -43.683603251846094, 3.4], [-23.33954410975789, -41.62437550935041, 5.18], [-22.82845280228104, -42.03462808946665, 3.8], [-23.49221492684906, -41.89509667889324, 1.76], [-22.776923601921965, -42.450209443523626, 4.22], [-22.77352018516772, -42.09058073086031, 8.26], [-22.74995065235169, -42.75836796296827, 5.84], [-22.105978561181168, -42.550678952071706, 2.98], [-22.74995065235169, -42.75836796296827, 2.76], [-20.84014855314802, -44.41714968437888, 4.67], [-22.5323477072842, -41.953990615225976, 1.28], [-22.94699897700589, -44.25738110014841, 7.04], [-22.09016645802717, -43.66131897460973, 3.64], [-22.250082826784563, -42.75651213645752, 4.08], [-20.94721465369746, -41.69309501733716, 102.17], [-20.865337997562424, -42.22900260348332, 8.4], [-20.76050274322707, -42.74455140302359, 2.89], [-22.94699897700589, -44.25738110014841, 6.74], [-23.232387013863832, -42.89399330795343, 4.1], [-20.9498842666306, -43.15164797758539, 3.11], [-22.849572680240527, -43.61651815948171, 9.61], [-20.94721465369746, -41.69309501733716, 99.75], [-20.98319949379191, -41.91878614506497, 0.87], [-22.5323477072842, -41.953990615225976, 0.98]],
+                {"blur": 15, "gradient": {"0.2": "blue", "0.4": "lime", "0.6": "yellow", "1": "red"}, "maxZoom": 18, "minOpacity": 0.5, "radius": 25}
+            );
+        
+    
+            heat_map_3939fa2c7f6fa465552a175d74d793a6.addTo(feature_group_f27064b7411a05bc74ddecafd9458ced);
+        
+    
+            var layer_control_0283116dd169f6755b3a8ebe6aee5487_layers = {
+                base_layers : {
+                    "\u003cstrong\u003eLocaliza\u00e7\u00e3o\u003cstrong\u003e" : tile_layer_3522e06248306c83b072cddf62eb7927,
+                    "\u003cstrong\u003eImagem de Sat\u00e9lite\u003cstrong\u003e" : tile_layer_ae4fdda950b7ca842808cf17f5fdca5f,
+                },
+                overlays :  {
+                    "Barras de Concentra\u00e7\u00e3o \u003cstrong\u003e(Poluente A)\u003cstrong\u003e" : feature_group_05f7563c218d50453264c5ff1378a69d,
+                    "Barras de Concentra\u00e7\u00e3o \u003cstrong\u003e(Poluente B)\u003cstrong\u003e" : feature_group_68f4c0d55e9c9e31539f5fd3d87d9a67,
+                    "Mapa de Calor \u003cstrong\u003e(Poluente A)\u003cstrong\u003e" : feature_group_ce36682be019991699be07129c8d6664,
+                    "Mapa de Calor \u003cstrong\u003e(Poluente B)\u003cstrong\u003e" : feature_group_f27064b7411a05bc74ddecafd9458ced,
+                },
+            };
+            let layer_control_0283116dd169f6755b3a8ebe6aee5487 = L.control.layers(
+                layer_control_0283116dd169f6755b3a8ebe6aee5487_layers.base_layers,
+                layer_control_0283116dd169f6755b3a8ebe6aee5487_layers.overlays,
+                {"autoZIndex": true, "collapsed": false, "position": "topleft"}
+            ).addTo(map_b374aa8744c5f879269b3549c5af2c4f);
+
+        
+</script>
+</html>
