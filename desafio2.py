@@ -1,0 +1,213 @@
+### -*- coding: utf-8 -*-
+# ----------------------------------------------------------------------------
+### src/map.py (Versão Final com todas as correções)
+#
+### Autor: Eveline Terra
+### Data: 28/09/2025
+# ----------------------------------------------------------------------------
+
+### ---1 Bibliotecas/imports --- 
+import pandas as pd
+import geopandas as gpd
+import folium
+from folium.plugins import HeatMap
+import os
+import io
+import json
+# ----------------------------------------------------------------------------
+### ---2 Constantes e Configurações ---
+INPUT_FILE = '/content/dados_exemplo_poluentes_no_acentos.csv' 
+OUTPUT_FILE = os.path.join('maps', 'mapa.html')
+COLOR_POL_A = '#9400D3' #DarkViolet
+COLOR_POL_B = '	#8B008B' #DarkMagenta
+# ----------------------------------------------------------------------------
+### ---3 Funções Auxiliares ---
+def normalize_value(value, min_val, max_val, scale_min=5, scale_max=50):
+    if max_val == min_val or max_val - min_val == 0:
+        return scale_min
+    return scale_min + ((value - min_val) / (max_val - min_val)) * (scale_max - scale_min)
+
+def load_and_clean_data(file_path):
+    print(f"Lendo dados de: {file_path}")
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            linhas_brutas = f.readlines()
+        
+        linhas_limpas = [linha.strip().strip('"') for linha in linhas_brutas]
+        csv_corrigido_string = "\n".join(linhas_limpas)
+        df = pd.read_csv(io.StringIO(csv_corrigido_string))
+        
+        print("Dados carregados com sucesso. Iniciando limpeza...")
+        
+        for col in ['lat', 'lon', 'pol_a', 'pol_b']:
+            df[col] = pd.to_numeric(df[col], errors='coerce')
+        df['sample_dt'] = pd.to_datetime(df['sample_dt'], errors='coerce')
+        df.dropna(subset=['lat', 'lon', 'pol_a', 'pol_b', 'sample_dt'], inplace=True)
+        
+        print(f"Limpeza de dados concluída. {len(df)} linhas válidas restantes.")
+        return df
+    except FileNotFoundError:
+        print(f"ERRO: O arquivo de entrada não foi encontrado em '{file_path}'")
+        return None
+# ----------------------------------------------------------------------------
+### ---4 Função Principal ---
+def create_advanced_map():
+    df = load_and_clean_data(INPUT_FILE)
+    if df is None or df.empty:
+        print("Não há dados para processar após a limpeza. Abortando.")
+        return
+
+    ## --- 4.1 Inicialização do Mapa e Camadas de Fundo ---
+    print("Criando o mapa base...")
+    map_center = [df['lat'].mean(), df['lon'].mean()]
+    
+    ## --- 4.2 Ativar a barra de escala diretamente na criação do mapa
+    m = folium.Map(
+        location=map_center,
+        zoom_start=8,
+        tiles=None,
+        control_scale=True # <-- 
+    )
+
+    folium.TileLayer('CartoDB positron', name='<strong>Localização<strong>', control=True).add_to(m)
+    folium.TileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', attr='Esri', name='<strong>Imagem de Satélite<strong>', control=True).add_to(m)
+
+    ## --- 4.3 Preparação dos Dados ---
+    latest_samples = df.loc[df.groupby('station_id')['sample_dt'].idxmax()]
+    print(f"Encontradas {len(latest_samples)} estações únicas para plotar as barras.")
+    
+    latest_samples['data_formatada'] = latest_samples['sample_dt'].dt.strftime('%d/%m/%Y')
+    
+    gdf = gpd.GeoDataFrame(latest_samples, geometry=gpd.points_from_xy(latest_samples.lon, latest_samples.lat), crs="EPSG:4326")
+    gdf['sample_dt'] = gdf['sample_dt'].astype(str)
+    geojson_data_dict = gdf.__geo_interface__
+
+    ## --- 4.4 Criação e Preenchimento das Camadas ---
+    barras_a = folium.FeatureGroup(name='Barras de Concentração <strong>(Poluente A)<strong>', show=True).add_to(m)
+    barras_b = folium.FeatureGroup(name='Barras de Concentração <strong>(Poluente B)<strong>', show=True).add_to(m)
+    heatmap_a = folium.FeatureGroup(name='Mapa de Calor <strong>(Poluente A)<strong>', show=True).add_to(m)
+    heatmap_b = folium.FeatureGroup(name='Mapa de Calor <strong>(Poluente B)<strong>', show=False).add_to(m)
+    
+    HeatMap([[row['lat'], row['lon'], row['pol_a']] for _, row in df.iterrows()], gradient={0.2: 'blue', 0.4: 'lime', 0.6: 'yellow', 1: 'red'}).add_to(heatmap_a)
+    HeatMap([[row['lat'], row['lon'], row['pol_b']] for _, row in df.iterrows()], gradient={0.2: 'blue', 0.4: 'lime', 0.6: 'yellow', 1: 'red'}).add_to(heatmap_b)
+
+    min_pol_a, max_pol_a = latest_samples['pol_a'].min(), latest_samples['pol_a'].max()
+    min_pol_b, max_pol_b = latest_samples['pol_b'].min(), latest_samples['pol_b'].max()
+
+    for _, row in latest_samples.iterrows():
+        tooltip_a = f"<strong>{row['station_name']}</strong><br>Data: {row['data_formatada']}<br>Poluente A: {row['pol_a']:.2f}"
+        tooltip_b = f"<strong>{row['station_name']}</strong><br>Data: {row['data_formatada']}<br>Poluente B: {row['pol_b']:.2f}"
+
+        height_a = normalize_value(row['pol_a'], min_pol_a, max_pol_a)
+        icon_html_a = f"""<div style="height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;"><div title="Poluente A: {row['pol_a']:.2f}" style="background-color: {COLOR_POL_A}; width: 12px; height: {height_a}px; border-radius: 2px;"></div></div>"""
+        folium.Marker(location=[row['lat'], row['lon']], tooltip=tooltip_a, icon=folium.DivIcon(html=icon_html_a, icon_size=(15, 55), icon_anchor=(0, 55))).add_to(barras_a)
+        
+        height_b = normalize_value(row['pol_b'], min_pol_b, max_pol_b)
+        icon_html_b = f"""<div style="height: 55px; width: 15px; display: flex; justify-content: center; align-items: flex-end;"><div title="Poluente B: {row['pol_b']:.2f}" style="background-color: {COLOR_POL_B}; width: 12px; height: {height_b}px; border-radius: 2px;"></div></div>"""
+        folium.Marker(location=[row['lat'], row['lon']], tooltip=tooltip_b, icon=folium.DivIcon(html=icon_html_b, icon_size=(15, 55), icon_anchor=(15, 55))).add_to(barras_b)
+
+    ## --- 4.5 Adição da Interface (Controles, Sidebar, Legenda) ---
+    print("Configurando a interface final...")
+    folium.LayerControl(position='topleft', collapsed=False).add_to(m)
+
+    custom_sidebar_html = f"""
+    <div id="sidebar" class="sidebar-right">
+        <button id="sidebar-toggle" onclick="toggleSidebar()">&#x2190;</button>
+        <div id="sidebar-content">
+            <h1 style="font-size: 22px;">🧭 <b>Análise de Poluentes</b></h1>
+            <p style="font-size: 14px; margin-bottom: 20px;">Selecione as camadas e explore os dados de concentração.</p>
+            <div id="layer-control-container"></div>
+            <h2 style="font-size: 16px; margin-top: 50px;">
+            <div class="row" style="margin-top: 20px;">
+            <br>
+              <strong>Opções de Download<strong>
+            </div>
+            </h2>
+            <button onclick="downloadGeoJSON()" class="download-btn">Baixar dados (GeoJSON)</button>
+        </div>
+    </div>
+    <script>
+        function toggleSidebar() {{
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('sidebar-toggle');
+            sidebar.classList.toggle('collapsed');
+            if (sidebar.classList.contains('collapsed')) {{ toggleBtn.innerHTML = '&#x2192;'; }} else {{ toggleBtn.innerHTML = '&#x2190;'; }}
+        }}
+        function downloadGeoJSON() {{
+            const geojsonData = {json.dumps(geojson_data_dict)};
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(geojsonData));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "dados_poluentes.geojson");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }}
+        document.addEventListener("DOMContentLoaded", function() {{
+            setTimeout(function() {{
+                const layerControl = document.querySelector('.leaflet-control-layers');
+                const targetContainer = document.getElementById('layer-control-container');
+                if (layerControl && targetContainer) {{
+                    targetContainer.appendChild(layerControl);
+                    layerControl.style.width = '100%';
+                    layerControl.style.border = 'none';
+                    layerControl.style.boxShadow = 'none';
+                }}
+            }}, 500);
+            toggleSidebar();
+        }});
+    </script>
+    <style>
+        .sidebar-right 
+        {{ position: fixed; 
+        top: 0; 
+        right: 0; 
+        height: 100%; 
+        width: 350px;
+        background-color: rgba(255, 255, 255, 0.85); 
+        padding: 20px; 
+        box-shadow: -2px 0 5px rgba(0,0,0,0.2); 
+        z-index: 1000; 
+        transition: right 0.3s; 
+        font-family: Arial, sans-serif; 
+        box-sizing: border-box; }}
+        .sidebar-right.collapsed {{ right: -350px; }}
+        #sidebar-toggle {{ position: absolute; left: -30px; top: 10px; width: 30px; height: 30px; background-color: #fff; border: 1px solid #ccc; cursor: pointer; font-size: 18px; }}
+        .download-btn {{ width: 100%; padding: 10px; font-size: 14px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px; }}
+        #layer-control-container .leaflet-control-layers-base label, #layer-control-container .leaflet-control-layers-overlays label {{ display: block; margin-bottom: 5px; font-size: 14px; }}
+    </style>
+    """
+    m.get_root().html.add_child(folium.Element(custom_sidebar_html))
+
+    legend_html = f'''
+    <div style="position: fixed; bottom: 30px; right: 85px; width: 180px; z-index:1000;
+                background-color: rgba(255, 255, 255, 0.85); 
+                border:2px solid grey; 
+                border-radius: 8px; 
+                padding: 10px; 
+                font-family: Arial, sans-serif; 
+                font-size: 12px;">
+        <h4 style="margin-top:0; margin-bottom: 10px; text-align: center;">Legenda</h4>
+        <p style="margin: 5px 0;"><strong>Barras de Concentração:</strong></p>
+        <div style="margin-bottom: 10px;">
+            <i style="background:{COLOR_POL_A}; width: 12px; height: 12px; display: inline-block; border: 1px solid #555;"></i> Poluente A<br>
+            <i style="background:{COLOR_POL_B}; width: 12px; height: 12px; display: inline-block; border: 1px solid #555;"></i> Poluente B
+        </div>
+        <p style="margin: 5px 0;"><strong>Mapa de Calor:</strong></p>
+        <div style="background: linear-gradient(to right, blue, lime, yellow, red); height: 15px; border: 1px solid #555;"></div>
+        <div style="display: flex; justify-content: space-between;">
+            <span>Baixa</span>
+            <span>Alta</span>
+        </div>
+    </div>
+    '''
+    m.get_root().html.add_child(folium.Element(legend_html))
+
+    ## --- 4.6 Salvamento do Arquivo Final ---
+    os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
+    m.save(OUTPUT_FILE)
+    print(f"✨ Desafio cumprido! Mapa final salvo em: {OUTPUT_FILE}")
+
+### --- Ponto de Entrada do Script ---
+if __name__ == '__main__':
+    create_advanced_map()
